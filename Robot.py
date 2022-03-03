@@ -19,14 +19,13 @@ class Tango:
         "upDownHead": 4,
     }
 
-    straightStopValue = 6000
+    straightMaxForward = 4500
     staightMediumForward = 5000
     straightSlowForward = 5400
-    straightMaxForward = 4500
-
-    straightMaxBackward = 7500
+    straightStopValue = 6000
+    straightSlowBackward = 6500
     straightMediumBackward = 7000
-    straightSlowBackward = 5400
+    straightMaxBackward = 7500
     motorSpeeds = [
         straightMaxBackward,
         straightMediumBackward,
@@ -79,12 +78,12 @@ class Tango:
     current_motor_speed = straightStopValue
     current_waist = waistCenter
     current_head_turn = headCenter
-    current_head_tilt = headCenter
+    current_head_tilt = headTiltMid
 
     def __init__(self):
         print("class started")
 
-    def forward(self, duration=0):
+    def forward(self, _=None, duration=0):
         motor = self.MotorDict["straight"]
         current_index = self.motorSpeeds.index(self.current_motor_speed)
         # value = self.straightStopValue + 200
@@ -92,11 +91,11 @@ class Tango:
             print("Speed already maxed out")
         else:
             current_index += 1
-            self.current_motor_speed = self.motorSpeeds[current_index]
-            value = self.current_motor_speed
+        self.current_motor_speed = self.motorSpeeds[current_index]
+        value = self.current_motor_speed
         self.run(value, motor, duration=duration)
 
-    def backward(self, duration=0):
+    def backward(self, _=None, duration=0):
         motor = self.MotorDict["straight"]
         current_index = self.motorSpeeds.index(self.current_motor_speed)
         # value = self.straightStopValue + 200
@@ -104,102 +103,102 @@ class Tango:
             print("Speed already Minimummed out")
         else:
             current_index -= 1
-            self.current_motor_speed = self.motorSpeeds[current_index]
-            value = self.current_motor_speed
+        self.current_motor_speed = self.motorSpeeds[current_index]
+        value = self.current_motor_speed
         self.run(value, motor, duration=duration)
 
-    def turnRight(self):
+    def turnRight(self, _=None, duration=0):
         pass
         # motor = self.MotorDict["turn"]
         # value = self.turnStopValue + 200
 
-    def turnLeft(self):
+    def turnLeft(self, _=None, duration=0):
         pass
         motor = self.MotorDict["turn"]
         value = self.turnStopValue - 200
         # duration = 0.1
         self.run(value, motor, duration)
 
-    def turnHeadLeft(self):
+    def turnHeadLeft(self, _=None):
         motor = self.MotorDict["head"]
         current_index = self.headTurns.index(self.current_head_turn)
         if current_index == len(self.headTurns) - 1:
             print("Head too far left")
         else:
             current_index += 1
-            self.current_head_turn = self.headTurns[current_index]
-            value = self.current_head_turn
+        self.current_head_turn = self.headTurns[current_index]
+        value = self.current_head_turn
         self.run(value, motor)
 
-    def turnHeadRight(self):
+    def turnHeadRight(self, _):
         motor = self.MotorDict["head"]
         current_index = self.headTurns.index(self.current_head_turn)
         if current_index == 0:
             print("Head too far right")
         else:
             current_index -= 1
-            self.current_head_turn = self.headTurns[current_index]
-            value = self.current_head_turn
+        self.current_head_turn = self.headTurns[current_index]
+        value = self.current_head_turn
         self.run(value, motor)
 
-    def tiltHeadUp(self):
+    def tiltHeadUp(self, _=None):
         motor = self.MotorDict["upDownHead"]
         current_index = self.headTilts.index(self.current_head_tilt)
         if current_index == len(self.headTilts) - 1:
             print("Head too far up")
         else:
             current_index += 1
-            self.current_head_tilt = self.headTilts[current_index]
-            value = self.current_head_tilt
+        self.current_head_tilt = self.headTilts[current_index]
+        value = self.current_head_tilt
         self.run(value, motor)
 
-    def tiltHeadDown(self):
+    def tiltHeadDown(self, _):
         motor = self.MotorDict["upDownHead"]
         current_index = self.headTilts.index(self.current_head_tilt)
         if current_index == 0:
             print("Head too far down")
         else:
             current_index -= 1
-            self.current_head_tilt = self.headTilts[current_index]
-            value = self.current_head_tilt
+        self.current_head_tilt = self.headTilts[current_index]
+        value = self.current_head_tilt
         self.run(value, motor)
 
-    def turnWaistLeft(self):
+    def turnWaistLeft(self, _=None):
         motor = self.MotorDict["waist"]
         current_index = self.waistTurn.index(self.current_waist)
         if current_index == len(self.waistTurn) - 1:
             print("Waist is too far left")
         else:
             current_index += 1
-            self.current_waist = self.waistTurn[current_index]
-            value = self.current_waist
+        self.current_waist = self.waistTurn[current_index]
+        value = self.current_waist
         self.run(value, motor)
 
-    def turnWaistRight(self):
+    def turnWaistRight(self, _=None):
         motor = self.MotorDict["waist"]
         current_index = self.waistTurn.index(self.current_waist)
         if current_index == 0:
             print("Head too far right")
         else:
             current_index -= 1
-            self.current_waist = self.waistTurn[current_index]
-            value = self.current_waist
+        self.current_waist = self.waistTurn[current_index]
+        value = self.current_waist
         self.run(value, motor)
 
-    def stop(self):
+    def stop(self, _=None):
         while self.current_motor_speed > self.straightStopValue:
             self.forward(duration=0.2)
         while self.current_motor_speed < self.straightStopValue:
             self.backward(duration=0.2)
 
-    def neutral(self):
+    def neutral(self, _=None):
         self.current_motor_speed = self.straightStopValue
         self.stop()
         self.current_waist = self.waistCenter
         self.run(self.current_waist, self.MotorDict["waist"])
         self.current_head_turn = self.headCenter
         self.run(self.current_head_turn, self.MotorDict["head"])
-        self.current_head_tilt = self.headCenter
+        self.current_head_tilt = self.headTiltMid
         self.run(self.current_head_tilt, self.MotorDict["upDownHead"])
 
     def run(self, value: int, motor: int, duration: float = 0):
