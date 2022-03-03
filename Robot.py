@@ -85,7 +85,7 @@ class Tango:
 
         self.run(self.straightStopValue, self.MotorDict["straight"])
 
-    def forward(self):
+    def forward(self, duration=0):
         motor = self.MotorDict["straight"]
         current_index = self.motorSpeeds.index(self.current_motor_speed)
         # value = self.straightStopValue + 200
@@ -95,10 +95,9 @@ class Tango:
             current_index += 1
             self.current_motor_speed = self.motorSpeeds[current_index]
             value = self.current_motor_speed
-        # duration = 0.1
-        self.run(value, motor)
+        self.run(value, motor, duration=duration)
 
-    def backward(self):
+    def backward(self, duration=0):
         motor = self.MotorDict["straight"]
         current_index = self.motorSpeeds.index(self.current_motor_speed)
         # value = self.straightStopValue + 200
@@ -108,8 +107,7 @@ class Tango:
             current_index -= 1
             self.current_motor_speed = self.motorSpeeds[current_index]
             value = self.current_motor_speed
-        # duration = 0.1
-        self.run(value, motor)
+        self.run(value, motor, duration=duration)
 
     def turnRight(self):
         pass
@@ -117,6 +115,7 @@ class Tango:
         # value = self.turnStopValue + 200
 
     def turnLeft(self):
+        pass
         motor = self.MotorDict["turn"]
         value = self.turnStopValue - 200
         # duration = 0.1
@@ -188,6 +187,22 @@ class Tango:
             value = self.current_waist
         self.run(value, motor)
 
+    def stop(self):
+        while self.current_motor_speed > self.straightStopValue:
+            self.forward(duration=0.2)
+        while self.current_motor_speed < self.straightStopValue:
+            self.backward(duration=0.2)
+
+    def neutral(self):
+        self.current_motor_speed = self.straightStopValue
+        self.stop()
+        self.current_waist = self.waistCenter
+        self.run(self.current_waist, self.MotorDict["waist"])
+        self.current_head_turn = self.headCenter
+        self.run(self.current_head_turn, self.MotorDict["head"])
+        self.current_head_tilt = self.headCenter
+        self.run(self.current_head_tilt, self.MotorDict["upDownHead"])
+
     def run(self, value: int, motor: int, duration: float = 0):
         lsb = value & 0x7F
         msb = (value >> 7) & 0x7F
@@ -219,13 +234,8 @@ class Tango:
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
-        if isinstance(exc_value, IndexError):
-            # Handle IndexError here...
-            print(f"An exception occurred in your with block: {exc_type}")
-            print(f"Exception message: {exc_value}")
+        self.neutral()
         self.main_motor.close()
-        # self.motor_x.close()
-        # self.motor_y.close()
 
 
 with Tango() as tango:
