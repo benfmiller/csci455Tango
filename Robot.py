@@ -12,6 +12,40 @@ class Tango:
 
     def __init__(self):
         print("class started")
+        self.MotorDict = {
+            "motor": 0,
+            "straight": 1,
+            "turn": 2,
+            "head": 3,
+            "upDownHead": 4,
+            "rightArm": 5,
+            "rightArmOut": 6,
+            }
+        self.stopValue = 6000
+    
+    def forward(self):
+        motor = self.MotorDict["straight"]
+        value = self.stopValue + 200
+        duration = 0.1
+        self.run(value, motor, duration)
+
+    def backward(self):
+        motor = self.MotorDict["straight"]
+        value = self.stopValue - 200
+        duration = 0.1
+        self.run(value, motor, duration)
+
+    def turnRight(self):
+        motor = self.MotorDict["turn"]
+        value = self.stopValue + 200
+        duration = 0.1
+        self.run(value, motor, duration)
+
+    def forward(self):
+        motor = self.MotorDict["turn"]
+        value = self.stopValue - 200
+        duration = 0.1
+        self.run(value, motor, duration)
 
     def run(self, value: int, motor: int, duration: float):
         lsb = value & 0x7F
