@@ -11,79 +11,78 @@ class Tango:
     main_motor = None
     # motor_x = None
 
+    MotorDict = {
+        "waist": 0,
+        "straight": 1,
+        "turn": 2,
+        "head": 3,
+        "upDownHead": 4,
+    }
+
+    straightStopValue = 6000
+    staightMediumForward = 5000
+    straightSlowForward = 5400
+    straightMaxForward = 4500
+
+    straightMaxBackward = 7500
+    straightMediumBackward = 7000
+    straightSlowBackward = 5400
+    motorSpeeds = [
+        straightMaxBackward,
+        straightMediumBackward,
+        straightSlowBackward,
+        straightStopValue,
+        straightSlowForward,
+        staightMediumForward,
+        straightMaxForward,
+    ]
+
+    turnStopValue = 6000
+    turnMaxLeft = 0
+    turnMaxRight = 0
+
+    headCenter = 6300
+    headMidLeft = 7200
+    headMaxLeft = 8000
+    headMaxRight = 4000
+    headMidRight = 5000
+    headTurns = [
+        headMaxLeft,
+        headMidLeft,
+        headCenter,
+        headMidRight,
+        headMaxRight,
+    ]
+
+    headTiltMid = 5300
+    headTiltUp = 7000
+    headTiltMidUp = 6500
+    headTiltMidDown = 4500
+    headTiltDown = 4000
+    headTilts = [
+        headTiltDown,
+        headTiltMidDown,
+        headTiltMid,
+        headTiltMidUp,
+        headTiltUp,
+    ]
+
+    waistCenter = 6000
+    waistLeft = 7500
+    waistRight = 4500
+    waistTurn = [
+        waistLeft,
+        waistCenter,
+        waistRight,
+    ]
+
+    current_motor_speed = straightStopValue
+    current_waist = waistCenter
+    current_head_turn = headCenter
+    current_head_tilt = headCenter
+
     def __init__(self):
         print("class started")
-        self.MotorDict = {
-            "waist": 0,
-            "straight": 1,
-            "turn": 2,
-            "head": 3,
-            "upDownHead": 4,
-        }
-
-        self.straightStopValue = 6000
-        self.staightMediumForward = 5000
-        self.straightSlowForward = 5400
-        self.straightMaxForward = 4500
-
-        self.straightMaxBackward = 7500
-        self.straightMediumBackward = 7000
-        self.straightSlowBackward = 5400
-        self.motorSpeeds = [
-            self.straightMaxBackward,
-            self.straightMediumBackward,
-            self.straightSlowBackward,
-            self.straightStopValue,
-            self.straightSlowForward,
-            self.staightMediumForward,
-            self.straightMaxForward,
-        ]
-
-        self.turnStopValue = 6000
-        self.turnMaxLeft = 0
-        self.turnMaxRight = 0
-
-        self.headCenter = 6300
-        self.headMidLeft = 7200
-        self.headMaxLeft = 8000
-        self.headMaxRight = 4000
-        self.headMidRight = 5000
-        self.headTurns = [
-            self.headMaxLeft,
-            self.headMidLeft,
-            self.headCenter,
-            self.headMidRight,
-            self.headMaxRight,
-        ]
-
-        self.headTiltMid = 5300
-        self.headTiltUp = 7000
-        self.headTiltMidUp = 6500
-        self.headTiltMidDown = 4500
-        self.headTiltDown = 4000
-        self.headTilts = [
-            self.headTiltDown,
-            self.headTiltMidDown,
-            self.headTiltMid,
-            self.headTiltMidUp,
-            self.headTiltUp,
-        ]
-
-        self.waistCenter = 6000
-        self.waistLeft = 7500
-        self.waistRight = 4500
-        self.waistTurn = [
-            self.waistLeft,
-            self.waistCenter,
-            self.waistRight,
-        ]
-
-        self.current_motor_speed = self.straightStopValue
-        self.current_waist = self.waistCenter
-        self.current_head_turn = self.headCenter
-        self.current_head_tilt = self.headCenter
-
-        self.run(self.straightStopValue, self.MotorDict["straight"])
 
     def forward(self, duration=0):
         motor = self.MotorDict["straight"]
@@ -143,7 +142,7 @@ class Tango:
             value = self.current_head_turn
         self.run(value, motor)
 
-    def tiltHeadDown(self):
+    def tiltHeadUp(self):
         motor = self.MotorDict["upDownHead"]
         current_index = self.headTilts.index(self.current_head_tilt)
         if current_index == len(self.headTilts) - 1:
@@ -154,7 +153,7 @@ class Tango:
             value = self.current_head_tilt
         self.run(value, motor)
 
-    def turnHeadRight(self):
+    def tiltHeadDown(self):
         motor = self.MotorDict["upDownHead"]
         current_index = self.headTilts.index(self.current_head_tilt)
         if current_index == 0:
@@ -176,7 +175,7 @@ class Tango:
             value = self.current_waist
         self.run(value, motor)
 
-    def turnHeadRight(self):
+    def turnWaistRight(self):
         motor = self.MotorDict["waist"]
         current_index = self.waistTurn.index(self.current_waist)
         if current_index == 0:
@@ -220,9 +219,6 @@ class Tango:
         print("Done Writing")
 
     def __enter__(self):
-        # self.main_motor = serial.Serial("/dev/ttyACM0")
-        # self.main_motor = serial.Serial("/dev/ttyACM1")
-        # return self
         try:
             self.main_motor = serial.Serial("/dev/ttyACM0")
         except:
@@ -231,63 +227,10 @@ class Tango:
             except:
                 print("No servo serial ports found")
                 sys.exit(0)
+
+        self.run(self.straightStopValue, self.MotorDict["straight"])
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.neutral()
         self.main_motor.close()
-
-
-with Tango() as tango:
-    Dict = {
-        "waist": 0,
-        "straight": 1,
-        "turn": 2,
-        "head": 3,
-        "upDownHead": 4,
-    }
-    # turn direction
-    motor = 0x01
-    value = 6000
-    duration = 0.01
-    tango.run(value, motor, duration)
-    motor = 0x01
-    value = 7000
-    duration = 0.1
-    tango.run(value, motor, duration)
-
-    motor = 0x02
-    value = 6000
-    duration = 0.01
-    tango.run(value, motor, duration)
-    # value = 7000
-    # tango.run(value, motor, duration)
-
-    # motor speed
-    # motor = 0x01
-    # value = 6000
-    # duration = 0.01
-    tango.run(value, motor, duration)
-    # value = 7000
-    # duration = 1.5
-    # tango.run(value, motor, duration)
-    # value = 6000
-    # duration = 0.5
-    # tango.run(value, motor, duration)
-    # value = 6800
-    # motor = 0x01
-    # tango.run(value, motor)
-
-
-win = tk.Tk()
-# keys = keyControl(win)
-win.bind("<Up>", keys.arrow)  # head tilt up
-win.bind("<Left>", keys.arrow)  # head turn left
-win.bind("<Down>", keys.arrow)  # head tilt down
-win.bind("<Right>", keys.arrow)  # head turn right
-win.bind("<z>", keys.waist)  # turn waist left
-win.bind("<c>", keys.waist)  # turn waist right
-win.bind("<w>", keys.head)  # drive forward
-win.bind("<s>", keys.head)  # drive backward
-win.bind("<a>", keys.head)  # turn left
-win.bind("<d>", keys.head)  # turn right
