@@ -4,6 +4,7 @@ Core robot functions for Robotics Group 26
 """
 
 import serial, time, sys
+import tkinter as tk
 
 
 class Tango:
@@ -23,62 +24,97 @@ class Tango:
         }
 
         self.straightStopValue = 6000
-        self.straightMaxForward = 0
-        self.straightMaxBackward = 0
+        self.staightMediumForward = 5000
+        self.straightSlowForward = 5400
+        self.straightMaxForward = 4500
+
+        self.straightMaxBackward = 7500
+        self.straightMediumBackward = 7000
+        self.straightSlowBackward = 5400
+        self.motorSpeeds = [
+            self.straightMaxBackward,
+            self.straightMediumBackward,
+            self.straightSlowBackward,
+            self.straightStopValue,
+            self.straightSlowForward,
+            self.staightMediumForward,
+            self.straightMaxForward,
+        ]
 
         self.turnStopValue = 6000
         self.turnMaxLeft = 0
         self.turnMaxRight = 0
 
         self.headCenter = 6300
+        self.headMidLeft = 7200
         self.headMaxLeft = 8000
         self.headMaxRight = 4000
+        self.headMidRight = 5000
+        self.headTurns = [
+            self.headMaxLeft,
+            self.headMidLeft,
+            self.headCenter,
+            self.headMidRight,
+            self.headMaxRight,
+        ]
+
         self.headTiltMid = 5300
         self.headTiltUp = 7000
+        self.headTiltMidUp = 6500
+        self.headTiltMidDown = 4500
         self.headTiltDown = 4000
+        self.headTilts = [
+            self.headTiltDown,
+            self.headTiltMidDown,
+            self.headTiltMid,
+            self.headTiltMidUp,
+            self.headTiltUp,
+        ]
 
         self.waistCenter = 6000
         self.waistLeft = 7500
         self.waistRight = 4500
+        self.waistTurn = [
+            self.waistLeft,
+            self.waistCenter,
+            self.waistRight,
+        ]
+
+        self.current_motor_speed = self.straightStopValue
+        self.current_waist = self.waistCenter
+        self.current_head_turn = self.headCenter
+        self.current_head_tilt = self.headCenter
 
     def forward(self):
         motor = self.MotorDict["straight"]
         value = self.straightStopValue + 200
-        duration = 0.1
+        # duration = 0.1
         self.run(value, motor, duration)
 
     def backward(self):
         motor = self.MotorDict["straight"]
         value = self.straightStopValue - 200
-        duration = 0.1
+        # duration = 0.1
         self.run(value, motor, duration)
 
     def turnRight(self):
         motor = self.MotorDict["turn"]
         value = self.turnStopValue + 200
-        duration = 0.1
+        # duration = 0.1
         self.run(value, motor, duration)
 
     def turnLeft(self):
         motor = self.MotorDict["turn"]
         value = self.turnStopValue - 200
-        duration = 0.1
+        # duration = 0.1
         self.run(value, motor, duration)
 
-    def run(self, value: int, motor: int, duration: float):
+    def run(self, value: int, motor: int, duration: float = 0):
         lsb = value & 0x7F
         msb = (value >> 7) & 0x7F
 
         # base string
         cmd = chr(0xAA) + chr(0xC) + chr(0x04)
-        # motor index
-        # 0 is the turn
-        # 1 is broken arm?
-        # 2 is arm elbow
-        # 3 is head
-        # 4 is up down for head
-        # 5 is right arm
-        # 6 is moving right out (elbow)
         cmd += chr(motor)
         # value
         cmd += chr(lsb) + chr(msb)
@@ -87,11 +123,8 @@ class Tango:
         # current_time = time.time()
         self.main_motor.write(cmd.encode("utf-8"))
         time.sleep(duration)
-        # while time.time() - current_time < duration:
-        # self.main_motor.write(cmd.encode("utf-8"))
 
         print("Done Writing")
-        return None
 
     def __enter__(self):
         self.main_motor = serial.Serial("/dev/ttyACM0")
@@ -151,21 +184,23 @@ with Tango() as tango:
     # tango.run(value, motor)
 
 
-# def controls(self):
-# win = tk.Tk()
-# keys = keyControl(win)
-# win.bind('<Up>', keys.arrow)
-# win.bind('<Left>',keys.arrow)
-# win.bind('<Down>',keys.arrow)
-# win.bind('<Right>',keys.arrow)
-# win.bind('<space>',keys.arrow)
-# win.bind('<z>', keys.waist)
-# win.bind('<c>',keys.waist)
-# win.bind('<w>',keys.head)
-# win.bind('<s>',keys.head)
-# win.bind('<a>',keys.head)
-# win.bind('<d>',keys.head)
+def keyControl(win):
+    ...
 
+
+win = tk.Tk()
+keys = keyControl(win)
+win.bind("<Up>", keys.arrow)  # head tilt up
+win.bind("<Left>", keys.arrow)  # head turn left
+win.bind("<Down>", keys.arrow)  # head tilt down
+win.bind("<Right>", keys.arrow)  # head turn right
+win.bind("<space>", keys.arrow)
+win.bind("<z>", keys.waist)
+win.bind("<c>", keys.waist)
+win.bind("<w>", keys.head)
+win.bind("<s>", keys.head)
+win.bind("<a>", keys.head)
+win.bind("<d>", keys.head)
 
 # try:
 #     usb = serial.Serial('/dev/ttyACM0')
@@ -179,18 +214,3 @@ with Tango() as tango:
 #     except:
 #         print("No servo serial ports found")
 #         sys.exit(0)
-
-# target = 6700
-
-# lsb = target &0x7F
-# msb = (target >> 7) & 0x7F
-
-# cmd = chr(0xaa) + chr(0xC) + chr(0x04) + chr(0x03) + chr(lsb) + chr(msb)
-# print("writing")
-# usb.write(cmd.encode('utf-8'))
-# print("reading")
-
-
-# class Robot:
-#     def __init__(self):
-#         pass
