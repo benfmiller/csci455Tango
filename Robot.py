@@ -20,30 +20,48 @@ class Tango:
             "upDownHead": 4,
             "rightArm": 5,
             "rightArmOut": 6,
-            }
-        self.stopValue = 6000
-    
+        }
+
+        self.straightStopValue = 6000
+        self.straightMaxForward = 0
+        self.straightMaxBackward = 0
+
+        self.turnStopValue = 6000
+        self.turnMaxLeft = 0
+        self.turnMaxRight = 0
+
+        self.headCenter = 6300
+        self.headMaxLeft = 8000
+        self.headMaxRight = 4000
+        self.headTiltMid = 5300
+        self.headTiltUp = 7000
+        self.headTiltDown = 4000
+
+        self.waistCenter = 6000
+        self.waistLeft = 7500
+        self.waistRight = 4500
+
     def forward(self):
         motor = self.MotorDict["straight"]
-        value = self.stopValue + 200
+        value = self.straightStopValue + 200
         duration = 0.1
         self.run(value, motor, duration)
 
     def backward(self):
         motor = self.MotorDict["straight"]
-        value = self.stopValue - 200
+        value = self.straightStopValue - 200
         duration = 0.1
         self.run(value, motor, duration)
 
     def turnRight(self):
         motor = self.MotorDict["turn"]
-        value = self.stopValue + 200
+        value = self.turnStopValue + 200
         duration = 0.1
         self.run(value, motor, duration)
 
-    def forward(self):
+    def turnLeft(self):
         motor = self.MotorDict["turn"]
-        value = self.stopValue - 200
+        value = self.turnStopValue - 200
         duration = 0.1
         self.run(value, motor, duration)
 
@@ -76,8 +94,8 @@ class Tango:
         return None
 
     def __enter__(self):
-        # self.main_motor = serial.Serial("/dev/ttyACM0")
-        self.main_motor = serial.Serial("/dev/ttyACM1")
+        self.main_motor = serial.Serial("/dev/ttyACM0")
+        # self.main_motor = serial.Serial("/dev/ttyACM1")
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
@@ -92,7 +110,7 @@ class Tango:
 
 with Tango() as tango:
     Dict = {
-        "motor": 0,
+        "waist": 0,
         "straight": 1,
         "turn": 2,
         "head": 3,
@@ -100,14 +118,34 @@ with Tango() as tango:
         "rightArm": 5,
         "rightArmOut": 6,
     }
-    # motor = Dict["motor"]
-    motor = 0x03
+    # turn direction
+    motor = 0x01
     value = 6000
-    duration = 1.0
+    duration = 0.01
     tango.run(value, motor, duration)
-    value = 7800
-    duration = 1.5
+    motor = 0x01
+    value = 7000
+    duration = 0.1
     tango.run(value, motor, duration)
+
+    motor = 0x02
+    value = 6000
+    duration = 0.01
+    tango.run(value, motor, duration)
+    # value = 7000
+    # tango.run(value, motor, duration)
+
+    # motor speed
+    # motor = 0x01
+    # value = 6000
+    # duration = 0.01
+    tango.run(value, motor, duration)
+    # value = 7000
+    # duration = 1.5
+    # tango.run(value, motor, duration)
+    # value = 6000
+    # duration = 0.5
+    # tango.run(value, motor, duration)
     # value = 6800
     # motor = 0x01
     # tango.run(value, motor)
