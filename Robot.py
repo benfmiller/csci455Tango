@@ -14,13 +14,11 @@ class Tango:
     def __init__(self):
         print("class started")
         self.MotorDict = {
-            "motor": 0,
+            "waist": 0,
             "straight": 1,
             "turn": 2,
             "head": 3,
             "upDownHead": 4,
-            "rightArm": 5,
-            "rightArmOut": 6,
         }
 
         self.straightStopValue = 6000
@@ -85,29 +83,110 @@ class Tango:
         self.current_head_turn = self.headCenter
         self.current_head_tilt = self.headCenter
 
+        self.run(self.straightStopValue, self.MotorDict["straight"])
+
     def forward(self):
         motor = self.MotorDict["straight"]
-        value = self.straightStopValue + 200
+        current_index = self.motorSpeeds.index(self.current_motor_speed)
+        # value = self.straightStopValue + 200
+        if current_index == len(self.motorSpeeds) - 1:
+            print("Speed already maxed out")
+        else:
+            current_index += 1
+            self.current_motor_speed = self.motorSpeeds[current_index]
+            value = self.current_motor_speed
         # duration = 0.1
-        self.run(value, motor, duration)
+        self.run(value, motor)
 
     def backward(self):
         motor = self.MotorDict["straight"]
-        value = self.straightStopValue - 200
+        current_index = self.motorSpeeds.index(self.current_motor_speed)
+        # value = self.straightStopValue + 200
+        if current_index == 0:
+            print("Speed already Minimummed out")
+        else:
+            current_index -= 1
+            self.current_motor_speed = self.motorSpeeds[current_index]
+            value = self.current_motor_speed
         # duration = 0.1
-        self.run(value, motor, duration)
+        self.run(value, motor)
 
     def turnRight(self):
-        motor = self.MotorDict["turn"]
-        value = self.turnStopValue + 200
-        # duration = 0.1
-        self.run(value, motor, duration)
+        pass
+        # motor = self.MotorDict["turn"]
+        # value = self.turnStopValue + 200
 
     def turnLeft(self):
         motor = self.MotorDict["turn"]
         value = self.turnStopValue - 200
         # duration = 0.1
         self.run(value, motor, duration)
+
+    def turnHeadLeft(self):
+        motor = self.MotorDict["head"]
+        current_index = self.headTurns.index(self.current_head_turn)
+        if current_index == len(self.headTurns) - 1:
+            print("Head too far left")
+        else:
+            current_index += 1
+            self.current_head_turn = self.headTurns[current_index]
+            value = self.current_head_turn
+        self.run(value, motor)
+
+    def turnHeadRight(self):
+        motor = self.MotorDict["head"]
+        current_index = self.headTurns.index(self.current_head_turn)
+        if current_index == 0:
+            print("Head too far right")
+        else:
+            current_index -= 1
+            self.current_head_turn = self.headTurns[current_index]
+            value = self.current_head_turn
+        self.run(value, motor)
+
+    def tiltHeadDown(self):
+        motor = self.MotorDict["upDownHead"]
+        current_index = self.headTilts.index(self.current_head_tilt)
+        if current_index == len(self.headTilts) - 1:
+            print("Head too far up")
+        else:
+            current_index += 1
+            self.current_head_tilt = self.headTilts[current_index]
+            value = self.current_head_tilt
+        self.run(value, motor)
+
+    def turnHeadRight(self):
+        motor = self.MotorDict["upDownHead"]
+        current_index = self.headTilts.index(self.current_head_tilt)
+        if current_index == 0:
+            print("Head too far down")
+        else:
+            current_index -= 1
+            self.current_head_tilt = self.headTilts[current_index]
+            value = self.current_head_tilt
+        self.run(value, motor)
+
+    def turnWaistLeft(self):
+        motor = self.MotorDict["waist"]
+        current_index = self.waistTurn.index(self.current_waist)
+        if current_index == len(self.waistTurn) - 1:
+            print("Waist is too far left")
+        else:
+            current_index += 1
+            self.current_waist = self.waistTurn[current_index]
+            value = self.current_waist
+        self.run(value, motor)
+
+    def turnHeadRight(self):
+        motor = self.MotorDict["waist"]
+        current_index = self.waistTurn.index(self.current_waist)
+        if current_index == 0:
+            print("Head too far right")
+        else:
+            current_index -= 1
+            self.current_waist = self.waistTurn[current_index]
+            value = self.current_waist
+        self.run(value, motor)
 
     def run(self, value: int, motor: int, duration: float = 0):
         lsb = value & 0x7F
@@ -120,15 +199,23 @@ class Tango:
         cmd += chr(lsb) + chr(msb)
 
         print("writing")
-        # current_time = time.time()
         self.main_motor.write(cmd.encode("utf-8"))
         time.sleep(duration)
 
         print("Done Writing")
 
     def __enter__(self):
-        self.main_motor = serial.Serial("/dev/ttyACM0")
+        # self.main_motor = serial.Serial("/dev/ttyACM0")
         # self.main_motor = serial.Serial("/dev/ttyACM1")
+        # return self
+        try:
+            self.main_motor = serial.Serial("/dev/ttyACM0")
+        except:
+            try:
+                self.main_motor = serial.Serial("/dev/ttyACM1")
+            except:
+                print("No servo serial ports found")
+                sys.exit(0)
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
@@ -148,8 +235,6 @@ with Tango() as tango:
         "turn": 2,
         "head": 3,
         "upDownHead": 4,
-        "rightArm": 5,
-        "rightArmOut": 6,
     }
     # turn direction
     motor = 0x01
@@ -184,33 +269,15 @@ with Tango() as tango:
     # tango.run(value, motor)
 
 
-def keyControl(win):
-    ...
-
-
 win = tk.Tk()
-keys = keyControl(win)
+# keys = keyControl(win)
 win.bind("<Up>", keys.arrow)  # head tilt up
 win.bind("<Left>", keys.arrow)  # head turn left
 win.bind("<Down>", keys.arrow)  # head tilt down
 win.bind("<Right>", keys.arrow)  # head turn right
-win.bind("<space>", keys.arrow)
-win.bind("<z>", keys.waist)
-win.bind("<c>", keys.waist)
-win.bind("<w>", keys.head)
-win.bind("<s>", keys.head)
-win.bind("<a>", keys.head)
-win.bind("<d>", keys.head)
-
-# try:
-#     usb = serial.Serial('/dev/ttyACM0')
-#     print(usb.name)
-#     print(usb.baudrate)
-# except:
-#     try:
-#         usb = serial.Serial('/dev/ttyACM1')
-#         print(usb.name)
-#         print(usb.baudrate)
-#     except:
-#         print("No servo serial ports found")
-#         sys.exit(0)
+win.bind("<z>", keys.waist)  # turn waist left
+win.bind("<c>", keys.waist)  # turn waist right
+win.bind("<w>", keys.head)  # drive forward
+win.bind("<s>", keys.head)  # drive backward
+win.bind("<a>", keys.head)  # turn left
+win.bind("<d>", keys.head)  # turn right
