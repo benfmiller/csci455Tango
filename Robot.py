@@ -23,7 +23,7 @@ class Tango:
     staightMediumForward = 5000
     straightSlowForward = 5400
     straightStopValue = 6000
-    straightSlowBackward = 6500
+    straightSlowBackward = 6600
     straightMediumBackward = 7000
     straightMaxBackward = 7500
     motorSpeeds = [
@@ -36,9 +36,14 @@ class Tango:
         straightMaxForward,
     ]
 
+    turnMaxRight = 5300
     turnStopValue = 6000
-    turnMaxLeft = 0
-    turnMaxRight = 0
+    turnMaxLeft = 6800
+    turningSpeeds = [
+        turnMaxRight,
+        turnStopValue,
+        turnMaxLeft,
+    ]
 
     headCenter = 6300
     headMidLeft = 7200
@@ -79,6 +84,7 @@ class Tango:
     current_waist = waistCenter
     current_head_turn = headCenter
     current_head_tilt = headTiltMid
+    current_turn_speed = turnStopValue
 
     def __init__(self):
         print("class started")
@@ -108,16 +114,36 @@ class Tango:
         self.run(value, motor, duration=duration)
 
     def turnRight(self, _=None, duration=0):
-        pass
-        # motor = self.MotorDict["turn"]
-        # value = self.turnStopValue + 200
+        motor = self.MotorDict["turn"]
+        # current_index = self.turningSpeeds.index(self.current_turn_speed)
+        # value = self.straightStopValue + 200
+        # if current_index == 0:
+        #     print("Turning already Minimummed out")
+        # else:
+        #     current_index -= 1
+        # self.current_turn_speed = self.turningSpeeds[current_index]
+        # value = self.current_turn_speed
+        self.run(6000, self.MotorDict["straight"], duration=0.1)
+        self.run(6000, motor, duration=0.1)
+        self.run(5000, motor, duration=1)
+        self.run(6000, motor, duration=0.1)
+        self.run(6000, self.MotorDict["straight"], duration=0.1)
 
     def turnLeft(self, _=None, duration=0):
-        pass
         motor = self.MotorDict["turn"]
-        value = self.turnStopValue - 200
-        # duration = 0.1
-        self.run(value, motor, duration)
+        # current_index = self.turningSpeeds.index(self.current_turn_speed)
+        # value = self.straightStopValue + 200
+        # if current_index == 0:
+        #     print("Turning already Minimummed out")
+        # else:
+        #     current_index -= 1
+        # self.current_turn_speed = self.turningSpeeds[current_index]
+        # value = self.current_turn_speed
+        self.run(6000, self.MotorDict["straight"], duration=0.1)
+        self.run(6000, motor, duration=0.1)
+        self.run(7000, motor, duration=1)
+        self.run(6000, motor, duration=0.1)
+        self.run(6000, self.MotorDict["straight"], duration=0.1)
 
     def turnHeadLeft(self, _=None):
         motor = self.MotorDict["head"]
@@ -186,6 +212,7 @@ class Tango:
         self.run(value, motor)
 
     def stop(self, _=None):
+        self.run(6000, self.MotorDict["turn"])
         while self.current_motor_speed > self.straightStopValue:
             self.forward(duration=0.2)
         while self.current_motor_speed < self.straightStopValue:
@@ -200,6 +227,9 @@ class Tango:
         self.run(self.current_head_turn, self.MotorDict["head"])
         self.current_head_tilt = self.headTiltMid
         self.run(self.current_head_tilt, self.MotorDict["upDownHead"])
+        self.current_turn_speed = self.turnStopValue
+        self.run(self.current_turn_speed, self.MotorDict["turn"])
+        time.sleep(0.1)
 
     def run(self, value: int, motor: int, duration: float = 0):
         lsb = value & 0x7F
@@ -211,7 +241,7 @@ class Tango:
         # value
         cmd += chr(lsb) + chr(msb)
 
-        print("writing")
+        print(f"writing: motor {motor}, value {value}")
         self.main_motor.write(cmd.encode("utf-8"))
         time.sleep(duration)
 
