@@ -19,9 +19,12 @@ class VoiceControl:
             "stop": self.robot.stop,
             "forward": partial(self.robot.forward, duration=0.2),
             "backward": partial(self.robot.backward, duration=0.2),
+            "right": self.robot.turnRight,
+            "left": self.robot.turnLeft,
+            "neutral": self.robot.neutral,
         }
 
-    def getWord(self):
+    def getWords(self):
         with sr.Microphone() as source:
             print(source)
             r = sr.Recognizer()
@@ -42,13 +45,13 @@ class VoiceControl:
 
     def run(self):
         while True:
-            words = self.getWord()
+            words = self.getWords()
             word_list = words.split()
-                for w in word_list:
-                    try:
-                        self.commands.get(w)
-                    except:
-                        print("Don't know that command")
+            for w in word_list:
+                try:
+                    self.commands.get(w)
+                except Exception as e:
+                    print("Don't know that command")
 
 
 with Tango() as tango:
