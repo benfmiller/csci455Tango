@@ -234,13 +234,12 @@ class Tango:
         self.current_motor_speed = self.straightStopValue
         self.stop()
         self.current_waist = self.waistCenter
-        self.run(self.current_waist, self.MotorDict["waist"])
+        self.run(self.current_waist, self.MotorDict["waist"], duration=0.1)
         self.current_head_turn = self.headCenter
-        self.run(self.current_head_turn, self.MotorDict["head"])
+        self.run(self.current_head_turn, self.MotorDict["head"], duration=0.1)
         self.current_head_tilt = self.headTiltMid
-        self.run(self.current_head_tilt, self.MotorDict["upDownHead"])
+        self.run(self.current_head_tilt, self.MotorDict["upDownHead"], duration=0.1)
         self.current_turn_speed = self.turnDiffStraight
-        self.run(self.current_turn_speed, self.MotorDict["turn"])
         time.sleep(0.1)
 
     def run(self, value: int, motor: int, duration: float = 0):
