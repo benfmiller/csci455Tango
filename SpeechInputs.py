@@ -26,9 +26,11 @@ class VoiceControl:
             "red": self.robot.turnWaistRight,
             "blue": self.robot.turnWaistLeft,
             "apple": self.robot.turnHeadRight,
+            "album": self.robot.turnHeadRight,
             "orange": self.robot.turnHeadLeft,
             "mango": self.robot.tiltHeadUp,
             "banana": self.robot.tiltHeadDown,
+            "nana": self.robot.tiltHeadDown,
         }
 
     def getWords(self) -> str:
@@ -53,21 +55,6 @@ class VoiceControl:
 
     def run(self):
         while True:
-            """
-            words = self.getWords()
-            print("heard commands: " + words)
-            if words in self.commands.keys():
-                self.commands.get(words)()
-            else:
-                word_list = words.split()
-                for w in word_list:
-                    try:
-                        self.commands.get(w)()
-                    except Exception as e:
-                        print("Don't know that command")
-            # Above works iff multi word commands are the only thing in 'words'
-            # Below is in progress to handle more cases
-            """
             words = self.getWords()
             word_list = words.split()
             print(word_list)
