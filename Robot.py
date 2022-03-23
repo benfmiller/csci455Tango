@@ -162,22 +162,22 @@ class Tango:
 
         self.run_drive(value + turn_diff, second_value + turn_diff, duration=duration)
 
-    def turnHeadLeft(self, _=None):
+    def turnHeadRight(self, _=None):
         motor = self.MotorDict["head"]
         current_index = self.headTurns.index(self.current_head_turn)
         if current_index == len(self.headTurns) - 1:
-            print("Head too far left")
+            print("Head too far right")
         else:
             current_index += 1
         self.current_head_turn = self.headTurns[current_index]
         value = self.current_head_turn
         self.run(value, motor)
 
-    def turnHeadRight(self, _):
+    def turnHeadLeft(self, _=None):
         motor = self.MotorDict["head"]
         current_index = self.headTurns.index(self.current_head_turn)
         if current_index == 0:
-            print("Head too far right")
+            print("Head too far left")
         else:
             current_index -= 1
         self.current_head_turn = self.headTurns[current_index]
@@ -195,7 +195,7 @@ class Tango:
         value = self.current_head_tilt
         self.run(value, motor)
 
-    def tiltHeadDown(self, _):
+    def tiltHeadDown(self, _=None):
         motor = self.MotorDict["upDownHead"]
         current_index = self.headTilts.index(self.current_head_tilt)
         if current_index == 0:
@@ -206,7 +206,7 @@ class Tango:
         value = self.current_head_tilt
         self.run(value, motor)
 
-    def turnWaistLeft(self, _=None):
+    def turnWaistRight(self, _=None):
         motor = self.MotorDict["waist"]
         current_index = self.waistTurn.index(self.current_waist)
         if current_index == len(self.waistTurn) - 1:
@@ -217,7 +217,7 @@ class Tango:
         value = self.current_waist
         self.run(value, motor)
 
-    def turnWaistRight(self, _=None):
+    def turnWaistLeft(self, _=None):
         motor = self.MotorDict["waist"]
         current_index = self.waistTurn.index(self.current_waist)
         if current_index == 0:
