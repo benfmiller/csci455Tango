@@ -128,7 +128,7 @@ class Tango:
             duration=duration,
         )
 
-    def turnRight(self, _=None, duration=0):
+    def turnLeft(self, _=None, duration=0):
         current_index = self.motorSpeeds.index(self.current_motor_speed)
         self.current_motor_speed = self.motorSpeeds[current_index]
         value = self.current_motor_speed
@@ -145,7 +145,7 @@ class Tango:
 
         self.run_drive(value + turn_diff, second_value + turn_diff, duration=duration)
 
-    def turnLeft(self, _=None, duration=0):
+    def turnRight(self, _=None, duration=0):
         current_index = self.motorSpeeds.index(self.current_motor_speed)
         self.current_motor_speed = self.motorSpeeds[current_index]
         value = self.current_motor_speed
@@ -230,9 +230,9 @@ class Tango:
 
     def stop(self, _=None):
         while self.current_turn_speed > self.turnDiffStraight:
-            self.turnLeft(duration=0.2)
-        while self.current_turn_speed < self.turnDiffStraight:
             self.turnRight(duration=0.2)
+        while self.current_turn_speed < self.turnDiffStraight:
+            self.turnLeft(duration=0.2)
         while self.current_motor_speed > self.straightStopValue:
             self.forward(duration=0.2)
         while self.current_motor_speed < self.straightStopValue:
