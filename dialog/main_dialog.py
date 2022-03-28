@@ -46,7 +46,9 @@ class Speaker:
         if audio is True:
             voices = self.engine.getProperty("voices")
             self.engine = pyttsx3.init()
+            # TODO
             # i corresponds with the voice type
+            # we'll need to figure out which voice to use and the rate
             i = 10
             self.engine.setProperty("voice", voices[i].id)
             print(f'Using voice: {self.engine.getProperty("voice")}')
@@ -61,6 +63,44 @@ class Speaker:
         print(f"Robot: {output}")
 
 
+class Document:
+    contents: list[str]
+
+    def __init__(self, document_file: str = "") -> None:
+        if document_file == "":
+            print("No file to read")
+            self.contents = []
+        else:
+            with open(document_file) as f:
+                self.contents = f.readlines()
+        self.parse_contents()
+
+    def parse_contents(self) -> None:
+        # TODO
+        pass
+
+
+class DialogBot:
+    listener: Listener
+    speaker: Speaker
+    document: Document
+
+    def __init__(
+        self, listener: Listener, speaker: Speaker, document: Document
+    ) -> None:
+        pass
+        self.listener = listener
+        self.speaker = speaker
+        self.document = document
+
+    def run(self) -> None:
+        # TODO
+        pass
+
+
 if __name__ == "__main__":
     listener = Listener(audio=False)
     speaker = Speaker(audio=False)
+    document = Document("TODO_input.txt")
+    dialog_bot = DialogBot(listener, speaker, document)
+    dialog_bot.run()
