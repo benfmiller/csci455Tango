@@ -1,5 +1,6 @@
 import speech_recognition as sr
 import pyttsx3
+import re
 
 
 class Listener:
@@ -63,8 +64,16 @@ class Speaker:
         print(f"Robot: {output}")
 
 
+class DocumentNode:
+    string: str
+
+    def __init__(self, document_line: str) -> None:
+        self.string = document_line
+
+
 class Document:
     contents: list[str]
+    root_node: DocumentNode
 
     def __init__(self, document_file: str = "") -> None:
         if document_file == "":
@@ -76,8 +85,16 @@ class Document:
         self.parse_contents()
 
     def parse_contents(self) -> None:
-        # TODO
-        pass
+        # TODO:
+        lines_builder = []
+        for line in self.contents:
+            line = line.strip()
+            if len(line) > 0:
+                if line[0] == "#":
+                    continue
+                lines_builder += [line]
+
+        print(lines_builder)
 
 
 class DialogBot:
@@ -101,6 +118,6 @@ class DialogBot:
 if __name__ == "__main__":
     listener = Listener(audio=False)
     speaker = Speaker(audio=False)
-    document = Document("TODO_input.txt")
+    document = Document("dialog/test_file1.txt")
     dialog_bot = DialogBot(listener, speaker, document)
     dialog_bot.run()
