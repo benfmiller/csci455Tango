@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import pyttsx3
 import re
+import csv
 
 
 class Listener:
@@ -74,6 +75,7 @@ class DocumentNode:
 class Document:
     contents: list[str]
     root_node: DocumentNode
+    variables: dict[str, list[str]] = {}
 
     def __init__(self, document_file: str = "") -> None:
         if document_file == "":
@@ -92,9 +94,47 @@ class Document:
             if len(line) > 0:
                 if line[0] == "#":
                     continue
+                if line[0] == "~":
+                    variable, value = self.parse_var_line(line)
+                    if variable is not None and value is not None:
+                        self.variables[variable] = value
+                    continue
                 lines_builder += [line]
+        lines_builder_var_parsed = []
+        for line in lines_builder:
+            if "~" in line:
+                for variable, value in self.variables.items():
+                    if variable in line:
+                        print("here")
+                        line = line.replace(variable, "[" + ",".join(value) + "]")
+                if "([" in line and "])" in line:
+                    line = line.replace("([", "[")
+                    line = line.replace("])", "]")
 
-        print(lines_builder)
+                if "~" in line:
+                    print(f"Error: unmatches variables in {line}")
+                else:
+                    lines_builder_var_parsed += [line]
+            else:
+                lines_builder_var_parsed += [line]
+        self.contents = lines_builder_var_parsed
+        self.build_tree()
+
+    def parse_var_line(self, line: str) -> tuple[str, list[str]]:
+        variable = line[0 : line.index(":")]
+        var_val = line[line.index(":") + 1 :]
+        var_val = var_val.strip()
+        var_val = var_val[1:-1]
+        csv_reader = csv.reader([var_val], delimiter=" ")
+        var_val_list = []
+        for row in csv_reader:
+            var_val_list = list(row)
+        return (variable, var_val_list)
+
+    def build_tree(self) -> None:
+        _ = [print(x) for x in self.contents]
+        print()
+        print(self.variables)
 
 
 class DialogBot:
