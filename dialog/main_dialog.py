@@ -51,8 +51,8 @@ class Speaker:  # output
 
     def __init__(self, audio=True) -> None:
         if audio is True:
-            voices = self.engine.getProperty("voices")
             self.engine = pyttsx3.init()
+            voices = self.engine.getProperty("voices")
             # TODO
             # i corresponds with the voice type
             # we'll need to figure out which voice to use and the rate
@@ -64,7 +64,7 @@ class Speaker:  # output
             self.using_console = True
 
     def output(self, output: str):
-        if self.using_console is True:
+        if self.using_console is False:
             self.engine.say(output)
             self.engine.runAndWait()
         print(f"Robot: {output}")
@@ -76,15 +76,17 @@ class DocumentNode:
     level: int
     inputs: list[str]
     outputs: list[str]
-    child_nodes: list[any] = []
-    parent_nodes: list[any] = []
+    child_nodes: list[any]
+    parent_nodes: list[any]
 
     def __init__(self, document_line: str) -> None:
         self.doc_line = document_line
+        self.child_nodes = []
+        self.parent_nodes = []
         self.parse_line()
 
     def parse_line(self):
-        line = self.doc_line
+        line = self.doc_line.lower()
         if line[0] != "u":
             print(f"Error: line must start with 'u': {line}")
         if line[1] not in string.digits:
@@ -161,8 +163,8 @@ class DocumentNode:
 
 class Document:
     contents: list[str]
-    root_nodes: list[DocumentNode] = []
-    variables: dict[str, list[str]] = {}
+    root_nodes: list[DocumentNode]
+    variables: dict[str, list[str]]
 
     def __init__(self, document_file: str = "") -> None:
         if document_file == "":
@@ -171,6 +173,8 @@ class Document:
         else:
             with open(document_file) as f:
                 self.contents = f.readlines()
+        self.root_nodes = []
+        self.variables = {}
         self.parse_contents()
 
     def parse_contents(self) -> None:
@@ -239,32 +243,13 @@ class Document:
             elif line_node.level == node_stack[-1].level:
                 node_stack.pop()
                 node_stack[-1].child_nodes += [line_node]
+                # node_stack[-1].child_nodes += [line_node]
             else:
                 while line_node.level != node_stack[-1]:
                     node_stack.pop()
+                node_stack.pop()
                 node_stack[-1].child_nodes += [line_node]
             node_stack += [line_node]
-
-    #     self.link_parent_nodes()
-
-    # def link_parent_nodes(self):
-    #     # This might break things
-    #     # But It should work
-    #     node_queue = []
-    #     for node in self.root_nodes:
-    #         node.parent_nodes = []
-    #         self.recursive_parent_node_link(node, self.root_nodes)
-
-    # def recursive_parent_node_link(
-    #     self, node: DocumentNode, siblings: list[DocumentNode]
-    # ):
-    #     for child_node in node.child_nodes:
-    #         child_node.parent_nodes = siblings
-    #         for _node in siblings:
-    #             for _sibling_node in _node.child_nodes:
-    #                 if _node == self:
-    #                     self.recursive_parent_node_link(child_node, _node.child_nodes)
-    #                     break
 
 
 class DialogBot:
@@ -291,30 +276,25 @@ class DialogBot:
             print("No root nodes from document!")
             return
         self.level = 0
-        while True:  # while input != "bye"
-            # TODO
+        while True:
             # document root nodes are active
             # Get input, compare it to inputs in each active node
             # if it matches, we "speak" output
             # Deactivate parent parent nodes and current node, activate subnodes
             # Handle variables
+            input_encountered = False
             _input = self.listener.get_input()
+            if _input == "bye":
+                self.speaker.output("Goodbye Gator")
+                break
             for node in self.active_nodes:
                 for input_option in node.inputs:
-                    # background noise my name is Fred
                     if "_" in input_option:
-                        # my name is _
-                        shortened_input = input_option[: _input.index("_")]
-                        # my name is
+                        shortened_input = input_option[: input_option.index("_")]
                         if shortened_input in _input:
                             # We have a match!
                             index = _input.index(shortened_input)
-                            # -1?
-                            # my name is
-                            # background noise my name is Fred
-                            after_underscore = _input[
-                                index + len(shortened_input) :
-                            ]  # -1
+                            after_underscore = _input[index + len(shortened_input) :]
                             print(after_underscore)
                             after_underscore_list = after_underscore.strip().split()
                             if len(after_underscore_list) == 0:
@@ -323,6 +303,7 @@ class DialogBot:
                             variable = after_underscore_list[0]
                             self.set_variable(variable, node)
                             self.matched_node(node)
+                            input_encountered = True
                             break
 
                         self.active_variables["_"] = True
@@ -330,30 +311,20 @@ class DialogBot:
                         if input_option in _input:
                             # We have a match!
                             self.matched_node(node)
+                            input_encountered = True
                             break
-            else:
-                # We don't want it to speak this?
+            if input_encountered == False:
                 print("no input matched with dialog")
 
     def matched_node(self, node: DocumentNode):
         output_index = random.randint(0, len(node.outputs) - 1)
         output = node.outputs[output_index]
-        for var_name, value in self.variables:
-            if "$" + var_name in output:
-                output = output.replace("$" + var_name, value)
+        for var_name, value in self.variables.items():
+            if var_name in output:
+                output = output.replace(var_name, value)
                 break
         self.speaker.output(output)
-        # new_active_nodes = node.child_nodes
         self.active_nodes = node.child_nodes
-        # for active_node in self.active_nodes: //not neccesary
-        #     # keep track of parent node or level?
-        #     if active_node == node:
-        #         continue
-        #     elif active_node.level < node.level - 1:
-        #         continue
-        #     else:
-        #         # new_active_nodes += active_node
-        # self.active_nodes = new_active_nodes
 
     def set_variable(self, variable: str, node: DocumentNode):
         for output in node.outputs:
@@ -370,7 +341,7 @@ class DialogBot:
 
 if __name__ == "__main__":
     listener = Listener(audio=False)
-    speaker = Speaker(audio=False)
+    speaker = Speaker(audio=True)
     document = Document("dialog/test_file1.txt")
     dialog_bot = DialogBot(listener, speaker, document)
     dialog_bot.run()
