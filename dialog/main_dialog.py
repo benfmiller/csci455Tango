@@ -4,10 +4,11 @@ import pyttsx3
 import re
 import csv
 import string
+import random
 from pprint import pprint
 
 
-class Listener:
+class Listener:  # input
     microphone: sr.Microphone
     listener_rec: sr.Recognizer
     using_console = False
@@ -29,21 +30,22 @@ class Listener:
         while user_input == "":
             if self.using_console is True:
                 user_input = input("Human: ").lower()
-            try:
-                print("listening")
-                audio = self.listener_rec.listen(self.microphone)
-                print("Got audio")
-                words = self.listener_rec.recognize_google(audio)
-                if isinstance(words, str):
-                    words = words.lower()
-                user_input = words
-            except sr.UnknownValueError:
-                print("Unrecognized word")
+            else:
+                try:
+                    print("listening")
+                    audio = self.listener_rec.listen(self.microphone)
+                    print("Got audio")
+                    words = self.listener_rec.recognize_google(audio)
+                    if isinstance(words, str):
+                        words = words.lower()
+                    user_input = words
+                except sr.UnknownValueError:
+                    print("Unrecognized word")
         print(f'User Input: "{user_input}"')
         return user_input
 
 
-class Speaker:
+class Speaker:  # output
     engine: pyttsx3.Engine
     using_console = False
 
@@ -75,6 +77,7 @@ class DocumentNode:
     inputs: list[str]
     outputs: list[str]
     child_nodes: list[any] = []
+    parent_nodes: list[any] = []
 
     def __init__(self, document_line: str) -> None:
         self.doc_line = document_line
@@ -99,6 +102,11 @@ class DocumentNode:
         line = line[line.index(":") + 1 :]
         inputs = line[: line.index(":")]
         outputs = line[line.index(":") + 1 :]
+        if "_" in line:
+            if "$" not in line:
+                print(f"Error: variable in input requires variable in output: {line}")
+                self.good_line = False
+                return
         self.parse_inputs(inputs)
         self.parse_outputs(outputs)
 
@@ -237,6 +245,27 @@ class Document:
                 node_stack[-1].child_nodes += [line_node]
             node_stack += [line_node]
 
+    #     self.link_parent_nodes()
+
+    # def link_parent_nodes(self):
+    #     # This might break things
+    #     # But It should work
+    #     node_queue = []
+    #     for node in self.root_nodes:
+    #         node.parent_nodes = []
+    #         self.recursive_parent_node_link(node, self.root_nodes)
+
+    # def recursive_parent_node_link(
+    #     self, node: DocumentNode, siblings: list[DocumentNode]
+    # ):
+    #     for child_node in node.child_nodes:
+    #         child_node.parent_nodes = siblings
+    #         for _node in siblings:
+    #             for _sibling_node in _node.child_nodes:
+    #                 if _node == self:
+    #                     self.recursive_parent_node_link(child_node, _node.child_nodes)
+    #                     break
+
 
 class DialogBot:
     listener: Listener
@@ -244,7 +273,8 @@ class DialogBot:
     document: Document
     active_nodes: list[DocumentNode]
     active_variables = {"_": False}
-    variables: dict[str, list[str]] = {}
+    variables: dict[str, str] = {}
+    level: int
 
     def __init__(
         self, listener: Listener, speaker: Speaker, document: Document
@@ -255,19 +285,87 @@ class DialogBot:
 
     def run(self) -> None:
         # TODO
-        # document root nodes are active
-        # Get input, compare it to inputs in each active node
-        # if it matches, we "speak" output
-        # Deactivate parent nodes, activate subnodes
-        # Handle variables
-        _input = self.listener.get_input()
-        for node in self.active_nodes:
-            for input_option in node.inputs:
-                if "_" in input_option:
-                    self.active_variables["_"] = True
 
-                    # input, compare to active node
-                    #
+        self.active_nodes = self.document.root_nodes
+        if len(self.active_nodes) == 0:
+            print("No root nodes from document!")
+            return
+        self.level = 0
+        while True:  # while input != "bye"
+            # TODO
+            # document root nodes are active
+            # Get input, compare it to inputs in each active node
+            # if it matches, we "speak" output
+            # Deactivate parent parent nodes and current node, activate subnodes
+            # Handle variables
+            _input = self.listener.get_input()
+            for node in self.active_nodes:
+                for input_option in node.inputs:
+                    # background noise my name is Fred
+                    if "_" in input_option:
+                        # my name is _
+                        shortened_input = input_option[: _input.index("_")]
+                        # my name is
+                        if shortened_input in _input:
+                            # We have a match!
+                            index = _input.index(shortened_input)
+                            # -1?
+                            # my name is
+                            # background noise my name is Fred
+                            after_underscore = _input[
+                                index + len(shortened_input) :
+                            ]  # -1
+                            print(after_underscore)
+                            after_underscore_list = after_underscore.strip().split()
+                            if len(after_underscore_list) == 0:
+                                # no variable, so wasn't a true match
+                                continue
+                            variable = after_underscore_list[0]
+                            self.set_variable(variable, node)
+                            self.matched_node(node)
+                            break
+
+                        self.active_variables["_"] = True
+                    else:
+                        if input_option in _input:
+                            # We have a match!
+                            self.matched_node(node)
+                            break
+            else:
+                # We don't want it to speak this?
+                print("no input matched with dialog")
+
+    def matched_node(self, node: DocumentNode):
+        output_index = random.randint(0, len(node.outputs) - 1)
+        output = node.outputs[output_index]
+        for var_name, value in self.variables:
+            if "$" + var_name in output:
+                output = output.replace("$" + var_name, value)
+                break
+        self.speaker.output(output)
+        # new_active_nodes = node.child_nodes
+        self.active_nodes = node.child_nodes
+        # for active_node in self.active_nodes: //not neccesary
+        #     # keep track of parent node or level?
+        #     if active_node == node:
+        #         continue
+        #     elif active_node.level < node.level - 1:
+        #         continue
+        #     else:
+        #         # new_active_nodes += active_node
+        # self.active_nodes = new_active_nodes
+
+    def set_variable(self, variable: str, node: DocumentNode):
+        for output in node.outputs:
+            if "$" in output:
+                after_dollar = output[output.index("$") :]
+                assert (
+                    len(after_dollar) > 0
+                )  # There has to be a variable name to store into
+                var_name = after_dollar.strip().split()[0]
+                self.variables[var_name] = variable
+                return
+        print("Error: variable retrieved from input but no name to match")
 
 
 if __name__ == "__main__":
@@ -275,4 +373,4 @@ if __name__ == "__main__":
     speaker = Speaker(audio=False)
     document = Document("dialog/test_file1.txt")
     dialog_bot = DialogBot(listener, speaker, document)
-    # dialog_bot.run()
+    dialog_bot.run()
