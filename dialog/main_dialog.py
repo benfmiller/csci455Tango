@@ -1,3 +1,4 @@
+from black import out
 import speech_recognition as sr
 import pyttsx3
 import re
@@ -89,14 +90,65 @@ class DocumentNode:
             self.level = int(line[1 : line.index(":")])
         except Exception as e:
             print(f"Illegal level in {self.doc_line}")
+            self.good_line = False
 
-        # TODO:
-        # square brackets in input are multiple input options
-        # Everything after colon is output
-        # Extract variable from underscore, assign to "$..."
+        if line.count(":") != 2:
+            print(f"Improper syntax, needs two ':' in {self.doc_line}")
+            self.good_line = False
+            return
+        line = line[line.index(":") + 1 :]
+        inputs = line[: line.index(":")]
+        outputs = line[line.index(":") + 1 :]
+        self.parse_inputs(inputs)
+        self.parse_outputs(outputs)
+
+    def parse_inputs(self, inputs: str):
+        inputs = inputs.strip()
+        if inputs[0] not in "([":
+            print(f"Error: bad inputs in {self.doc_line}")
+            self.good_line = False
+            return
+        if inputs[0] == "(":
+            assert inputs[-1] == ")"  # matching "()"
+            inputs = inputs[1:-1]
+            self.inputs = [inputs]
+        elif inputs[0] == "[":
+            assert inputs[-1] == "]"  # matching "()"
+            inputs = inputs[1:-1]
+            if "," not in inputs:
+                csv_reader = csv.reader([inputs], delimiter=" ")
+            else:
+                csv_reader = csv.reader([inputs], delimiter=",")
+            inputs_list = []
+            for row in csv_reader:
+                inputs_list = list(row)
+                self.inputs = inputs_list
+        else:
+            print(f"Bad inputs format, need () or []: {self.doc_line}")
+            self.good_line = False
+
+    def parse_outputs(self, outputs: str):
+        outputs = outputs.strip()
+        if len(outputs) == 0:
+            print(f"No outputs given: {self.doc_line}")
+            self.good_line = False
+            return
+        if outputs[0] == "[":
+            assert outputs[-1] == "]"  # matching "()"
+            outputs = outputs[1:-1]
+            if "," not in outputs:
+                csv_reader = csv.reader([outputs], delimiter=" ")
+            else:
+                csv_reader = csv.reader([outputs], delimiter=",")
+            outputs_list = []
+            for row in csv_reader:
+                outputs_list = list(row)
+                self.outputs = outputs_list
+        else:
+            self.outputs = [outputs]
 
     def __repr__(self) -> str:
-        return self.doc_line
+        return self.doc_line + ": " + len(self.child_nodes) + " child nodes"
 
 
 class Document:
@@ -203,13 +255,11 @@ class DialogBot:
 
     def run(self) -> None:
         # TODO
-
         # document root nodes are active
         # Get input, compare it to inputs in each active node
         # if it matches, we "speak" output
         # Deactivate parent nodes, activate subnodes
         # Handle variables
-
         _input = self.listener.get_input()
         for node in self.active_nodes:
             for input_option in node.inputs:
@@ -217,13 +267,7 @@ class DialogBot:
                     self.active_variables["_"] = True
 
                     # input, compare to active node
-
-                # if "~" in _input:
-                #     self.active_variables["~"] = True
-                # if "#" in _input:
-                #     self.active_variables["#"] = True
-                # if "*" in _input:
-                #     self.active_variables["*"] = True
+                    #
 
 
 if __name__ == "__main__":
