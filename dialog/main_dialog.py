@@ -2,6 +2,7 @@ import speech_recognition as sr
 import pyttsx3
 import re
 import csv
+import string
 
 
 class Listener:
@@ -66,15 +67,25 @@ class Speaker:
 
 
 class DocumentNode:
-    string: str
+    doc_line: str
+    good_line: bool = True
 
     def __init__(self, document_line: str) -> None:
-        self.string = document_line
+        self.doc_line = document_line
+        self.parse_line()
+
+    def parse_line(self):
+        line = self.doc_line
+        if line[0] != "u":
+            print(f"Error: line must start with 'u': {line}")
+        if line[1] not in string.digits:
+            line = "u0" + line[1:]
+        # TODO:
 
 
 class Document:
     contents: list[str]
-    root_node: DocumentNode
+    root_nodes: list[DocumentNode]
     variables: dict[str, list[str]] = {}
 
     def __init__(self, document_file: str = "") -> None:
@@ -87,7 +98,6 @@ class Document:
         self.parse_contents()
 
     def parse_contents(self) -> None:
-        # TODO:
         lines_builder = []
         for line in self.contents:
             line = line.strip()
@@ -105,7 +115,6 @@ class Document:
             if "~" in line:
                 for variable, value in self.variables.items():
                     if variable in line:
-                        print("here")
                         line = line.replace(variable, "[" + ",".join(value) + "]")
                 if "([" in line and "])" in line:
                     line = line.replace("([", "[")
@@ -132,9 +141,17 @@ class Document:
         return (variable, var_val_list)
 
     def build_tree(self) -> None:
+        # TODO:
+        last_level = 0
+
+        for line in self.contents:
+            line_node = DocumentNode(line)
+            if line_node.good_line is False:
+                continue
+
+            # if int(line[1]) == last_level +1:
+
         _ = [print(x) for x in self.contents]
-        print()
-        print(self.variables)
 
 
 class DialogBot:
