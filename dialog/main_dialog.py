@@ -6,6 +6,17 @@ import csv
 import string
 import random
 from pprint import pprint
+import argparse
+
+ap = argparse.ArgumentParser()
+ap.add_argument(
+    "-f",
+    "--file",
+    help="path to the input file",
+    required=False,
+    default="dialog/test_file1.txt",
+)
+args = ap.parse_args()
 
 
 class Listener:  # input
@@ -53,7 +64,6 @@ class Speaker:  # output
         if audio is True:
             self.engine = pyttsx3.init()
             voices = self.engine.getProperty("voices")
-            # TODO
             # i corresponds with the voice type
             # we'll need to figure out which voice to use and the rate
             i = 10
@@ -86,6 +96,12 @@ class DocumentNode:
         self.parse_line()
 
     def parse_line(self):
+        """
+        Does a bunch of sanity checks on the inputs
+        Extracts line level
+        Verifies presence of input and output
+        If variable is present, makes sure it is in both input and output
+        """
         line = self.doc_line.lower()
         if line[0] != "u":
             print(f"Error: line must start with 'u': {line}")
@@ -113,6 +129,11 @@ class DocumentNode:
         self.parse_outputs(outputs)
 
     def parse_inputs(self, inputs: str):
+        """Constructs inputs list from input extracted from parse line
+
+        Args:
+            inputs (str): _description_
+        """
         inputs = inputs.strip()
         if inputs[0] not in "([":
             print(f"Error: bad inputs in {self.doc_line}")
@@ -138,6 +159,11 @@ class DocumentNode:
             self.good_line = False
 
     def parse_outputs(self, outputs: str):
+        """Constructs outputs list from output extracted from parse line
+
+        Args:
+            outputs (str): _description_
+        """
         outputs = outputs.strip()
         if len(outputs) == 0:
             print(f"No outputs given: {self.doc_line}")
@@ -167,6 +193,11 @@ class Document:
     variables: dict[str, list[str]]
 
     def __init__(self, document_file: str = "") -> None:
+        """Opends the file and reads the contents. Sends to parse_contents()
+
+        Args:
+            document_file (str, optional): _description_. Defaults to "".
+        """
         if document_file == "":
             print("No file to read")
             self.contents = []
@@ -178,7 +209,10 @@ class Document:
         self.parse_contents()
 
     def parse_contents(self) -> None:
-        """Parses all contents"""
+        """Handles comments
+        Parses variables and replaces them
+        Calls build_tree
+        """
         lines_builder = []
         for line in self.contents:
             line = line.strip()
@@ -211,6 +245,14 @@ class Document:
         self.build_tree()
 
     def parse_var_line(self, line: str) -> tuple[str, list[str]]:
+        """Parses variable declaration line
+
+        Args:
+            line (str): _description_
+
+        Returns:
+            tuple[str, list[str]]: _description_
+        """
         variable = line[0 : line.index(":")]
         var_val = line[line.index(":") + 1 :]
         var_val = var_val.strip()
@@ -222,6 +264,7 @@ class Document:
         return (variable, var_val_list)
 
     def build_tree(self) -> None:
+        """Builds document tree from refined list"""
         node_stack = []
         for line in self.contents:
             line_node = DocumentNode(line)
@@ -243,7 +286,6 @@ class Document:
             elif line_node.level == node_stack[-1].level:
                 node_stack.pop()
                 node_stack[-1].child_nodes += [line_node]
-                # node_stack[-1].child_nodes += [line_node]
             else:
                 while line_node.level != node_stack[-1]:
                     node_stack.pop()
@@ -257,7 +299,6 @@ class DialogBot:
     speaker: Speaker
     document: Document
     active_nodes: list[DocumentNode]
-    active_variables = {"_": False}
     variables: dict[str, str] = {}
     level: int
 
@@ -269,13 +310,16 @@ class DialogBot:
         self.document = document
 
     def run(self) -> None:
-        # TODO
-
+        """Main Loop of program
+        Sets up root nodes, checks for variables,
+        Sends output
+        """
         self.active_nodes = self.document.root_nodes
         if len(self.active_nodes) == 0:
             print("No root nodes from document!")
             return
         self.level = 0
+        print("\n\nRunning DialogBot:")
         while True:
             # document root nodes are active
             # Get input, compare it to inputs in each active node
@@ -305,8 +349,6 @@ class DialogBot:
                             self.matched_node(node)
                             input_encountered = True
                             break
-
-                        self.active_variables["_"] = True
                     else:
                         if input_option in _input:
                             # We have a match!
@@ -317,6 +359,14 @@ class DialogBot:
                 print("no input matched with dialog")
 
     def matched_node(self, node: DocumentNode):
+        """This function is called if there is a match between what the user
+        inputs and an input rule
+        Randomizes output
+        Sets next active nodes
+
+        Args:
+            node (DocumentNode): _description_
+        """
         output_index = random.randint(0, len(node.outputs) - 1)
         output = node.outputs[output_index]
         for var_name, value in self.variables.items():
@@ -327,6 +377,13 @@ class DialogBot:
         self.active_nodes = node.child_nodes
 
     def set_variable(self, variable: str, node: DocumentNode):
+        """If variable is found in input, this is called, which in turn sets
+        variable dictionary for outputs
+
+        Args:
+            variable (str): _description_
+            node (DocumentNode): _description_
+        """
         for output in node.outputs:
             if "$" in output:
                 after_dollar = output[output.index("$") :]
@@ -342,6 +399,6 @@ class DialogBot:
 if __name__ == "__main__":
     listener = Listener(audio=False)
     speaker = Speaker(audio=True)
-    document = Document("dialog/test_file1.txt")
+    document = Document(args.file)
     dialog_bot = DialogBot(listener, speaker, document)
     dialog_bot.run()
