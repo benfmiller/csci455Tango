@@ -1,34 +1,34 @@
 #:kivy 1.0.9
 
-<PongBall>:
-    size: 50, 50
+
+
+
+
+<DragButton>:
     drag_rectangle: self.x, self.y, self.width, self.height
-    drag_timeout: 10000
-    drag_distance: 0
-    canvas:
-        Ellipse:
-            pos: self.pos
-            size: self.size
+    drag_timeout: 10000000
+    drag_distance: 10
+    on_release: print(f'Drag Button {self.text} pressed')
 
-
-
-<PongGame>:
-    canvas:
-        Rectangle:
-            pos: self.center_x - 5, 0
-            size: 10, self.height
-
-    Label:
-        font_size: 70
-        center_x: root.width / 4
-        top: root.top - 50
-        text: "0"
-
-    Label:
-        font_size: 70
-        center_x: root.width * 3 / 4
-        top: root.top - 50
-        text: "0"
-
-    PongBall:
-        center: self.parent.center
+BoxLayout:
+    BoxLayout:
+        orientation: 'vertical'
+        DragButton:
+            text: '0'
+        DragButton:
+            text: '1'
+        DragButton:
+            text: '2'
+        DragButton:
+            text: '3'
+    BoxLayout:
+        id: middle
+    BoxLayout:
+        id:right
+        BoxLayout:
+            orientation: 'vertical'
+            Label:
+                text: 'Do Nothing'
+            Label:
+                id: remove_zone
+                text: 'Remove Widget'
