@@ -13,7 +13,16 @@ from kivy.properties import BooleanProperty, ListProperty
 from kivy.animation import Animation
 
 
-class DragButton(DragBehavior, Button):
+class PongBall(Widget):
+    velocity_x = NumericProperty(0)
+    velocity_y = NumericProperty(0)
+    velocity = ReferenceListProperty(velocity_x, velocity_y)
+
+    def move(self):
+        self.pos = Vector(*self.velocity) + self.pos
+
+
+class DragObj(DragBehavior, Widget):
     dragging = BooleanProperty(False)
     original_pos = ListProperty()
 
@@ -41,6 +50,39 @@ class DragButton(DragBehavior, Button):
                 anim.start(self)
         return super().on_touch_up(touch)
 
+
+class DragButton(DragBehavior, Button):
+    dragging = BooleanProperty(False)
+    original_pos = ListProperty()
+
+    def on_touch_down(self, touch):
+        # self.add_widget(
+        #     PongBall(),
+        # )
+        # self.parent.add_widget(DragButton())
+        if self.collide_point(*touch.pos):
+            print("on touch down")
+            self.original_pos = self.pos
+        return super().on_touch_down(touch)
+
+    def on_touch_move(self, touch):
+        if touch.grab_current is self:
+            self.opacity = 0.4
+            self.dragging = True
+        return super().on_touch_move(touch)
+
+    def on_touch_up(self, touch):
+        app = App.get_running_app()
+        if self.dragging:
+            self.opacity = 1
+            self.dragging = False
+            if self.collide_widget(app.root.ids.remove_zone):
+                self.parent.remove_widget(self)
+            else:
+                anim = Animation(pos=self.original_pos, duration=0.5)
+                anim.start(self)
+        return super().on_touch_up(touch)
+
     #
     # # velocity of the ball on x and y axis
     # velocity_x = NumericProperty(0)
@@ -56,10 +98,6 @@ class DragButton(DragBehavior, Button):
     #     self.pos = Vector(*self.velocity) + self.pos
 
 
-# class MainLayout(Widget):
-#     pass
-#
-#
 class TangoApp(App):
     def build(self):
         # return MainLayout()

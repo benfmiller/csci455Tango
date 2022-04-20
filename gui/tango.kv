@@ -2,6 +2,12 @@
 
 
 
+<PongBall>:
+    size: 50, 50
+    canvas:
+        Ellipse:
+            pos: self.pos
+            size: self.size
 
 
 <DragButton>:
@@ -10,9 +16,11 @@
     drag_distance: 10
     on_release: print(f'Drag Button {self.text} pressed')
 
-BoxLayout:
+GridLayout:
+    cols: 2
     BoxLayout:
         orientation: 'vertical'
+        size_hint_x: 0.4
         DragButton:
             text: '0'
         DragButton:
@@ -21,10 +29,13 @@ BoxLayout:
             text: '2'
         DragButton:
             text: '3'
-    BoxLayout:
-        id: middle
+    # BoxLayout:
+        # id: middle
     BoxLayout:
         id:right
+        DragButton:
+            text: '0'
+            size_hint_x: 0.4
         BoxLayout:
             orientation: 'vertical'
             Label:
