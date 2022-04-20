@@ -1,37 +1,37 @@
 #!/usr/bin/env python3
 
 from kivy.app import App
+from kivy.uix.widget import Widget
+from kivy.properties import NumericProperty, ReferenceListProperty
+from kivy.vector import Vector
+from kivy.uix.behaviors import DragBehavior
 from kivy.uix.label import Label
 
-# importing builder from kivy
-from kivy.lang import Builder
-from kivy.uix.behaviors import DragBehavior
 
-# using this class we will combine
-# the drag behaviour to our label widget
-class DraggableLabel(DragBehavior, Label):
+class PongBall(DragBehavior, Widget):
+
+    # velocity of the ball on x and y axis
+    velocity_x = NumericProperty(0)
+    velocity_y = NumericProperty(0)
+
+    # referencelist property so we can use ball.velocity as
+    # a shorthand, just like e.g. w.pos for w.x and w.y
+    velocity = ReferenceListProperty(velocity_x, velocity_y)
+
+    # ``move`` function will move the ball one step. This
+    #  will be called in equal intervals to animate the ball
+    def move(self):
+        self.pos = Vector(*self.velocity) + self.pos
+
+
+class PongGame(Widget):
     pass
 
 
-# this is the main class which
-# will render the whole application
-class uiApp(App):
-
-    # method which will render our application
+class TangoApp(App):
     def build(self):
-        return Builder.load_string(
-            """
-<DraggableLabel>:
-    drag_rectangle: self.x, self.y, self.width, self.height
-    drag_timeout: 10000
-    drag_distance: 0
-DraggableLabel:
-    text:"[size=40]GeeksForGeeks[/size]"
-    markup:True
-                                   """
-        )
+        return PongGame()
 
 
 if __name__ == "__main__":
-    # running the application
-    uiApp().run()
+    TangoApp().run()
