@@ -1,7 +1,8 @@
 import tkinter as tk
 import time
 
-class Eyes():
+
+class Eyes:
     def __init__(self, win):
         self.win = win
         self.win.geometry("800x480")
@@ -30,12 +31,14 @@ class Eyes():
         self.win.update()
         self.win.after(250, self.eyeballs())
 
+
 def main():
     win = tk.Tk()
     e = Eyes(win)
     for i in range(10):
         e.blink()
-   
+
     win.mainloop()
-    
+
+
 main()
