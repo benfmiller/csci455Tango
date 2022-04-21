@@ -102,7 +102,8 @@ class ActionWidge(DragBehavior, Button):
                     place_widge.set_action(self)
             anim = Animation(pos=self.original_pos, duration=0.0)
             anim.start(self)
-        return super().on_touch_up(touch)
+        # return super().on_touch_up(touch)
+        return
 
     def activate(self) -> None:
         print("Base Button Activated")
@@ -188,7 +189,8 @@ class DriveWidge(ActionWidge):
                 time.sleep(0.05)
                 position += 1
         time.sleep(float(self.delay_input.text))
-        root_robot.stop()
+        if actually_move:
+            root_robot.stop()
 
 
 # ------------------------------------------------------------------------------
@@ -255,7 +257,8 @@ class TurnWidge(ActionWidge):
                 time.sleep(0.05)
                 position += 1
         time.sleep(float(self.delay_input.text))
-        root_robot.stop()
+        if actually_move:
+            root_robot.stop()
 
 
 # ------------------------------------------------------------------------------

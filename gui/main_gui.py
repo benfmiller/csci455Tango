@@ -7,7 +7,9 @@ from kivy.uix.button import Button
 from kivy.config import Config
 from action_widgets import ActionWidge
 
-Config.set("kivy", "keyboard_mode", "systemandmulti")
+Config.set("kivy", "keyboard_mode", "systemanddock")
+Config.set("graphics", "width", "200")
+Config.set("graphics", "height", "200")
 
 # 1. Motors with speed, time and direction.
 # 2. Motors turn robot left, or right for x amount of seconds.
