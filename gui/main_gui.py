@@ -2,9 +2,12 @@
 
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.properties import NumericProperty, ReferenceListProperty
-from kivy.vector import Vector
+
+# from kivy.properties import NumericProperty, ReferenceListProperty
+# from kivy.vector import Vector
 from kivy.uix.behaviors import DragBehavior
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.gridlayout import GridLayout
 
 # from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -133,6 +136,10 @@ class OutputWidge(ActionWidge):
     action_type = "output"
 
 
+class MenuWidget(Widget):
+    pass
+
+
 class PlaceHolderButton(Button):
     num = 0
     category = None
@@ -141,6 +148,11 @@ class PlaceHolderButton(Button):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
             print("I've been touched!")
+
+            # self.add_widget(MenuWidget())
+            sm = ScreenManager()
+            sm.add_widget(Screen())
+            sm.switch_to(Screen())
         return super().on_touch_down(touch)
 
     def set_action(self, actionWidge: ActionWidge):
@@ -168,9 +180,18 @@ class PlaceHolderButton(Button):
     #             return id
 
 
+class MyScreenManager(ScreenManager):
+    pass
+
+
+class MainLayout(GridLayout):
+    pass
+
+
 class TangoApp(App):
     def build(self):
-        return super().build()
+        return MainLayout()
+        # return super().build()
 
 
 if __name__ == "__main__":
