@@ -37,6 +37,15 @@ categories = {
 }
 
 
+class ReturnButton(Button):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            print("Returning to Main Screen")
+            app = App.get_running_app()
+            app.root.current = "mainScreen"
+        return super().on_touch_down(touch)
+
+
 class ClearButton(Button):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -71,10 +80,6 @@ class ActionWidge(DragBehavior, Button):
     action_type = None
 
     def on_touch_down(self, touch):
-        # self.add_widget(
-        #     PongBall(),
-        # )
-        # self.parent.add_widget(DragButton())
         if self.collide_point(*touch.pos):
             print("on touch down")
             self.original_pos = self.pos
@@ -150,15 +155,28 @@ class PlaceHolderButton(Button):
         if self.collide_point(*touch.pos):
             print("I've been touched!")
             app = App.get_running_app()
+            self.set_settings_screen()
+            app.root.current = "settingsScreen"
             # print(app.root.ids)
             # print(app.root.switch_to)
             # app.root.switch_to(app.root.ids.settingsScreen)
-            app.root.current = "settingsScreen"
             # app.root.current = "seetingsScreen"
             # app.root.ids.screenManager.current = "seetingsScreen"
 
             # self.add_widget(MenuWidget())
         return super().on_touch_down(touch)
+
+    def set_settings_screen(self):
+        # TODO:
+        app = App.get_running_app()
+        settings_layout = app.root.ids.settingsLayout
+        for widge in list(settings_layout.children):
+            settings_layout.remove_widget(widge)
+
+        settings_layout.add_widget(Button())
+        settings_layout.add_widget(Button())
+        settings_layout.add_widget(Button())
+        settings_layout.add_widget(Button())
 
     def set_action(self, actionWidge: ActionWidge):
         # print(actionWidge)
