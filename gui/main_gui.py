@@ -61,43 +61,10 @@ class ActivateButton(Button):
         return super().on_touch_down(touch)
 
 
-class PlaceHolderButton(Button):
-    num = 0
-    category = None
-    attributes = None
-
-    def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos):
-            print("I've been touched!")
-        return super().on_touch_down(touch)
-
-    def extra_func(self):
-
-        print("Calling extra_func")
-        self.text = "blah"
-        print(self.background_normal)
-        # print(type(self.background_normal))
-        self.background_normal = "./hello.jpeg"
-
-    def reset(self):
-        # TODO: reset text
-        self.category = None
-        self.attributes = None
-        self.background_normal = "atlas://data/images/defaulttheme/button"
-        # print(self.parent.ids)
-
-        # print(self.find_id)
-
-    # def find_id(self, parent, widget):
-    #     for id, obj in parent.ids.items():
-    #         if obj == widget:
-    #             print(id)
-    #             return id
-
-
 class ActionWidge(DragBehavior, Button):
     dragging = BooleanProperty(False)
     original_pos = ListProperty()
+    action_type = None
 
     def on_touch_down(self, touch):
         # self.add_widget(
@@ -116,7 +83,6 @@ class ActionWidge(DragBehavior, Button):
         return super().on_touch_move(touch)
 
     def collide_widget(self, wid):
-        print(abs(self.center_x - wid.center_x))
         if abs(self.center_x - wid.center_x) < wid.width / 2:
             if self.top < wid.y:
                 return False
@@ -133,10 +99,73 @@ class ActionWidge(DragBehavior, Button):
             self.dragging = False
             for place_widge in app.root.ids.placeHolderLayout.children:
                 if self.collide_widget(place_widge):
-                    place_widge.extra_func()
+                    place_widge.set_action(self)
             anim = Animation(pos=self.original_pos, duration=0.0)
             anim.start(self)
         return super().on_touch_up(touch)
+
+
+class DriveWidge(ActionWidge):
+    action_type = "drive"
+
+
+class TurnWidge(ActionWidge):
+    action_type = "turn"
+
+
+class HeadTiltWidge(ActionWidge):
+    action_type = "head tilt"
+
+
+class HeadTurnWidge(ActionWidge):
+    action_type = "head turn"
+
+
+class WaistWidge(ActionWidge):
+    action_type = "waist turn"
+
+
+class InputWidge(ActionWidge):
+    action_type = "input"
+
+
+class OutputWidge(ActionWidge):
+    action_type = "output"
+
+
+class PlaceHolderButton(Button):
+    num = 0
+    category = None
+    attributes = None
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            print("I've been touched!")
+        return super().on_touch_down(touch)
+
+    def set_action(self, actionWidge: ActionWidge):
+        # print(actionWidge)
+        self.category = actionWidge.action_type
+
+        self.text = actionWidge.text
+        # print(self.background_normal)
+        # print(type(self.background_normal))
+        self.background_normal = "./hello.jpeg"
+
+    def reset(self):
+        # TODO: reset text
+        self.category = None
+        self.attributes = None
+        self.background_normal = "atlas://data/images/defaulttheme/button"
+        # print(self.parent.ids)
+
+        # print(self.find_id)
+
+    # def find_id(self, parent, widget):
+    #     for id, obj in parent.ids.items():
+    #         if obj == widget:
+    #             print(id)
+    #             return id
 
 
 class TangoApp(App):
