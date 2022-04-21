@@ -95,6 +95,14 @@ class Tango:
 
     def __init__(self):
         print("class started")
+        try:
+            self.main_motor = serial.Serial("/dev/ttyACM0")
+        except:
+            try:
+                self.main_motor = serial.Serial("/dev/ttyACM1")
+            except:
+                print("No servo serial ports found")
+                sys.exit(0)
 
     def forward(self, _=None, duration=0.1):
         current_index = self.motorSpeeds.index(self.current_motor_speed)

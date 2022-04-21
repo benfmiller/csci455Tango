@@ -15,14 +15,14 @@ from kivy.uix.bubble import Bubble, BubbleButton
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 
-actually_speak = False
-actually_listen = False
-actually_move = False
+actually_speak = True
+actually_listen = True
+actually_move = True
 
 if actually_move:
-    from robot import Robot
+    from robot import Tango
 
-    root_robot = Robot()
+    root_robot = Tango()
 else:
     root_robot = None
 
@@ -102,8 +102,7 @@ class ActionWidge(DragBehavior, Button):
                     place_widge.set_action(self)
             anim = Animation(pos=self.original_pos, duration=0.0)
             anim.start(self)
-        # return super().on_touch_up(touch)
-        return
+            return super().on_touch_up(touch)
 
     def activate(self) -> None:
         print("Base Button Activated")

@@ -6,10 +6,14 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.config import Config
 from action_widgets import ActionWidge
+from kivy.core.window import Window
+
+Window.maximize()
 
 Config.set("kivy", "keyboard_mode", "systemanddock")
-Config.set("graphics", "width", "200")
-Config.set("graphics", "height", "200")
+Config.write()
+# Config.set("graphics", "width", "200")
+# Config.set("graphics", "height", "200")
 
 # 1. Motors with speed, time and direction.
 # 2. Motors turn robot left, or right for x amount of seconds.
@@ -135,3 +139,10 @@ class TangoApp(App):
 
 if __name__ == "__main__":
     TangoApp().run()
+
+if actually_move:
+    from robot import Tango
+
+    root_robot = Tango()
+else:
+    root_robot = None
