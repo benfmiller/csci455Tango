@@ -31,6 +31,31 @@ actually_speak = False
 actually_listen = False
 actually_move = False
 
+if actually_move:
+    from robot import Robot
+
+    root_robot = Robot()
+else:
+    root_robot = None
+
+# self.commands = {
+#     "stop": self.robot.stop,
+#     "forward": partial(self.robot.forward, duration=0.2),
+#     "backward": partial(self.robot.backward, duration=0.2),
+#     "right": self.robot.turnRight,
+#     "left": self.robot.turnLeft,
+#     "neutral": self.robot.neutral,
+#     "read": self.robot.turnWaistRight,
+#     "red": self.robot.turnWaistRight,
+#     "blue": self.robot.turnWaistLeft,
+#     "apple": self.robot.turnHeadRight,
+#     "album": self.robot.turnHeadRight,
+#     "orange": self.robot.turnHeadLeft,
+#     "mango": self.robot.tiltHeadUp,
+#     "banana": self.robot.tiltHeadDown,
+#     "nana": self.robot.tiltHeadDown,
+# }
+
 
 class Speaker:  # output
     engine: pyttsx3.Engine
@@ -215,51 +240,197 @@ class TurnWidge(ActionWidge):
 
 
 class HeadTiltWidge(ActionWidge):
-    position: int
-    duration: float
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.position = 0
-        self.duration = 0
+        self.position_widge = TextInput()
+        self.position_widge.input_type = "number"
+        self.position_widge.text = "0"
+        self.duration_widge = TextInput()
+        self.duration_widge.input_type = "number"
+        self.duration_widge.text = "0"
+        self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1][:-2]
-        return f"{self.get_class_name()}: position {self.position}: seconds {self.duration}: after_delay {self.after_delay}"
+        str(self.__class__).split(".")[-1]
+        return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+
+    def build_settings(self):
+        inner_layout = BoxLayout()
+
+        block1 = BoxLayout()
+        block1.orientation = "vertical"
+        block1.size_hint_x = 0.3
+        label = Label()
+        label.text = "Position [-2, 2] int"
+        label.size_hint_y = 0.2
+
+        block1.add_widget(label)
+        block1.add_widget(self.position_widge)
+
+        block2 = BoxLayout()
+        block2.orientation = "vertical"
+        block2.size_hint_x = 0.3
+        label = Label()
+        label.text = "Duration Seconds float\nLeave at 0 to stay in position"
+        label.size_hint_y = 0.2
+
+        block2.add_widget(label)
+        block2.add_widget(self.duration_widge)
+
+        inner_layout.add_widget(block1)
+        inner_layout.add_widget(block2)
+        self.delay_block.size_hint_x = 0.3
+        inner_layout.add_widget(self.delay_block)
+        return inner_layout
+
+    def set_settings(self, settings_layout: BoxLayout):
+        settings_layout.add_widget(self.inner_layout)
+
+    def activate(self) -> None:
+        print("Moving waist")
+        if actually_move:
+            position = int(self.position_widge.text)
+            while position < 0:
+                root_robot.tiltHeadDown()
+                time.sleep(0.05)
+                position += 1
+            while position > 0:
+                root_robot.tiltHeadUp()
+                time.sleep(0.05)
+                position += 1
+        time.sleep(float(self.delay_input.text))
+        if float(self.delay_input.text) == 0 and actually_move:
+            root_robot.neutral()
 
 
 # ------------------------------------------------------------------------------
 
 
 class HeadTurnWidge(ActionWidge):
-    position: int
-    duration: float
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.position = 0
-        self.duration = 0
+        self.position_widge = TextInput()
+        self.position_widge.input_type = "number"
+        self.position_widge.text = "0"
+        self.duration_widge = TextInput()
+        self.duration_widge.input_type = "number"
+        self.duration_widge.text = "0"
+        self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
         str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: position {self.position}: seconds {self.duration}: after_delay {self.after_delay}"
+        return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+
+    def build_settings(self):
+        inner_layout = BoxLayout()
+
+        block1 = BoxLayout()
+        block1.orientation = "vertical"
+        block1.size_hint_x = 0.3
+        label = Label()
+        label.text = "Position [-2, 2] int"
+        label.size_hint_y = 0.2
+
+        block1.add_widget(label)
+        block1.add_widget(self.position_widge)
+
+        block2 = BoxLayout()
+        block2.orientation = "vertical"
+        block2.size_hint_x = 0.3
+        label = Label()
+        label.text = "Duration Seconds float\nLeave at 0 to stay in position"
+        label.size_hint_y = 0.2
+
+        block2.add_widget(label)
+        block2.add_widget(self.duration_widge)
+
+        inner_layout.add_widget(block1)
+        inner_layout.add_widget(block2)
+        self.delay_block.size_hint_x = 0.3
+        inner_layout.add_widget(self.delay_block)
+        return inner_layout
+
+    def set_settings(self, settings_layout: BoxLayout):
+        settings_layout.add_widget(self.inner_layout)
+
+    def activate(self) -> None:
+        print("Moving waist")
+        if actually_move:
+            position = int(self.position_widge.text)
+            while position < 0:
+                root_robot.turnHeadLeft()
+                time.sleep(0.05)
+                position += 1
+            while position > 0:
+                root_robot.turnHeadRight()
+                time.sleep(0.05)
+                position += 1
+        time.sleep(float(self.delay_input.text))
+        if float(self.delay_input.text) == 0 and actually_move:
+            root_robot.neutral()
 
 
 # ------------------------------------------------------------------------------
 
 
 class WaistWidge(ActionWidge):
-    position: int
-    duration: float
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.position = 0
-        self.duration = 0
+        self.position_widge = TextInput()
+        self.position_widge.input_type = "number"
+        self.position_widge.text = "0"
+        self.duration_widge = TextInput()
+        self.duration_widge.input_type = "number"
+        self.duration_widge.text = "0"
+        self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
         str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: speed {self.position}: seconds {self.duration}: after_delay {self.after_delay}"
+        return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+
+    def build_settings(self):
+        inner_layout = BoxLayout()
+
+        block1 = BoxLayout()
+        block1.orientation = "vertical"
+        block1.size_hint_x = 0.3
+        label = Label()
+        label.text = "Position [-1, 1] int"
+        label.size_hint_y = 0.2
+
+        block1.add_widget(label)
+        block1.add_widget(self.position_widge)
+
+        block2 = BoxLayout()
+        block2.orientation = "vertical"
+        block2.size_hint_x = 0.3
+        label = Label()
+        label.text = "Duration Seconds float\nLeave at 0 to stay in position"
+        label.size_hint_y = 0.2
+
+        block2.add_widget(label)
+        block2.add_widget(self.duration_widge)
+
+        inner_layout.add_widget(block1)
+        inner_layout.add_widget(block2)
+        self.delay_block.size_hint_x = 0.3
+        inner_layout.add_widget(self.delay_block)
+        return inner_layout
+
+    def set_settings(self, settings_layout: BoxLayout):
+        settings_layout.add_widget(self.inner_layout)
+
+    def activate(self) -> None:
+        print("Moving waist")
+        if actually_move:
+            position = int(self.position_widge.text)
+            if position == -1:
+                root_robot.turnWaistLeft()
+            elif position == 1:
+                root_robot.turnWaistRight()
+        time.sleep(float(self.delay_input.text))
+        if float(self.delay_input.text) == 0 and actually_move:
+            root_robot.neutral()
 
 
 # ------------------------------------------------------------------------------
@@ -315,15 +486,15 @@ class InputWidge(ActionWidge):
                     except sr.UnknownValueError:
                         print("Don't know that word")
                     if self.input_widge.text.lower() in words:
-                        print("Words accepted!")
                         break
         else:
-            return
+            print("command line input not working?")
             # while True:
             #     words = input()
             #     if self.input_widge.text.lower() in words:
             #         print("Words accepted!")
             #         break
+        print("Words accepted!")
         time.sleep(float(self.delay_input.text))
 
 
