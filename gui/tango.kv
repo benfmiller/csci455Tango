@@ -1,15 +1,6 @@
 #:kivy 1.0.9
 
 
-
-<PongBall>:
-    size: 50, 50
-    canvas:
-        Ellipse:
-            pos: self.pos
-            size: self.size
-
-
 <ActionWidge>:
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
@@ -23,25 +14,28 @@ GridLayout:
         size_hint_x: 0.3
         ActionWidge:
             id: button1
-            background_normal: "hello.jpeg"
+            # background_normal: "hello.jpeg"
+            allow_stretch: True
+            keep_ratio: True
+            text: 'Drive!'
         ActionWidge:
             id: button2
-            text: '2'
+            text: 'Turn'
         ActionWidge:
             id: button3
-            text: '3'
+            text: 'Head Tilt'
         ActionWidge:
             id: button4
-            text: '4'
+            text: 'Head Turn'
         ActionWidge:
             id: button5
-            text: '5'
+            text: 'Waist Turn'
         ActionWidge:
             id: button6
-            text: '6'
+            text: 'Human speech input'
         ActionWidge:
             id: button7
-            text: '7'
+            text: 'Robot speak'
     BoxLayout:
         id: middle
         size_hint_x: 0.05
@@ -53,14 +47,17 @@ GridLayout:
                 size_hint_y:0.3
                 Label:
                     text: ''
-                Button:
-                    id: Clear Button
+                ClearButton:
+                    id: clearButton
                     text: 'Clear!'
                     size_hint_x:0.3
             BoxLayout:
+                id: placeHolderLayout
                 PlaceHolderButton:
                     id: place1
                     text: '1'
+                    allow_stretch: True
+                    keep_ratio: True
                 PlaceHolderButton:
                     id: place2
                     text: '2'
@@ -86,7 +83,7 @@ GridLayout:
                 size_hint_y:0.3
                 Label:
                     text: ''
-                Button:
+                ActivateButton:
                     id: activateButton
                     text: 'Activate!'
                     size_hint_x:0.3
