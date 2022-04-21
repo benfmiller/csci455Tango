@@ -72,10 +72,11 @@ class PlaceHolderButton(Button):
         return super().on_touch_down(touch)
 
     def extra_func(self):
+
         print("Calling extra_func")
         self.text = "blah"
         print(self.background_normal)
-        print(type(self.background_normal))
+        # print(type(self.background_normal))
         self.background_normal = "./hello.jpeg"
 
     def reset(self):
@@ -114,14 +115,25 @@ class ActionWidge(DragBehavior, Button):
             self.dragging = True
         return super().on_touch_move(touch)
 
+    def collide_widget(self, wid):
+        print(abs(self.center_x - wid.center_x))
+        if abs(self.center_x - wid.center_x) < wid.width / 2:
+            if self.top < wid.y:
+                return False
+            if self.y > wid.top:
+                return False
+            return True
+        return False
+
     def on_touch_up(self, touch):
         app = App.get_running_app()
         # print(app.root.ids)
         if self.dragging:
             self.opacity = 1
             self.dragging = False
-            if self.collide_widget(app.root.ids["place1"]):
-                app.root.ids["place1"].extra_func()
+            for place_widge in app.root.ids.placeHolderLayout.children:
+                if self.collide_widget(place_widge):
+                    place_widge.extra_func()
             anim = Animation(pos=self.original_pos, duration=0.0)
             anim.start(self)
         return super().on_touch_up(touch)
