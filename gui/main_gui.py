@@ -21,6 +21,7 @@ from kivy.animation import Animation
 # 6. A wait for human speech input
 # 7. Talking, be able to type in what sentence you want to say and the robot says it.
 
+num_placeholders = 8
 categories = {
     "drive": [],
     "turn": [],
@@ -37,7 +38,7 @@ class ClearButton(Button):
         if self.collide_point(*touch.pos):
             print("Clearing placeholders")
             app = App.get_running_app()
-            num = 8
+            num = len(app.root.ids.placeHolderLayout.children)
             for button in app.root.ids.placeHolderLayout.children:
                 button.reset()
                 button.text = str(num)
@@ -50,15 +51,20 @@ class ActivateButton(Button):
         if self.collide_point(*touch.pos):
             print("Activating setup!")
             app = App.get_running_app()
+            # num = len(app.root.ids.placeHolderLayout.children)
+            num = 1
             for button in app.root.ids.placeHolderLayout.children[::-1]:
-                print("Running ")
-                print(button.text)
+                print(
+                    f"Running box {num}: category {button.category}: attributes: {button.attributes}"
+                )
+                num += 1
         return super().on_touch_down(touch)
 
 
 class PlaceHolderButton(Button):
     num = 0
     category = None
+    attributes = None
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -68,11 +74,15 @@ class PlaceHolderButton(Button):
     def extra_func(self):
         print("Calling extra_func")
         self.text = "blah"
+        print(self.background_normal)
+        print(type(self.background_normal))
         self.background_normal = "./hello.jpeg"
 
     def reset(self):
         # TODO: reset text
         self.category = None
+        self.attributes = None
+        self.background_normal = "atlas://data/images/defaulttheme/button"
         # print(self.parent.ids)
 
         # print(self.find_id)
