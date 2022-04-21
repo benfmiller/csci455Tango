@@ -3,27 +3,15 @@ import pyttsx3
 import speech_recognition as sr
 from kivy.app import App
 from kivy.uix.widget import Widget
-
-# from kivy.properties import NumericProperty, ReferenceListProperty
-# from kivy.vector import Vector
 from kivy.uix.behaviors import DragBehavior
-
-# from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
-
-# from kivy.uix.gridlayout import GridLayout
-
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-
-
-# Simple drag from a boxlayout onto a drop zone, animate the return if the drop zone is missed.
 from kivy.properties import BooleanProperty, ListProperty
 from kivy.animation import Animation
 from kivy.uix.vkeyboard import VKeyboard
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.bubble import Bubble, BubbleButton
-
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 
@@ -37,24 +25,6 @@ if actually_move:
     root_robot = Robot()
 else:
     root_robot = None
-
-# self.commands = {
-#     "stop": self.robot.stop,
-#     "forward": partial(self.robot.forward, duration=0.2),
-#     "backward": partial(self.robot.backward, duration=0.2),
-#     "right": self.robot.turnRight,
-#     "left": self.robot.turnLeft,
-#     "neutral": self.robot.neutral,
-#     "read": self.robot.turnWaistRight,
-#     "red": self.robot.turnWaistRight,
-#     "blue": self.robot.turnWaistLeft,
-#     "apple": self.robot.turnHeadRight,
-#     "album": self.robot.turnHeadRight,
-#     "orange": self.robot.turnHeadLeft,
-#     "mango": self.robot.tiltHeadUp,
-#     "banana": self.robot.tiltHeadDown,
-#     "nana": self.robot.tiltHeadDown,
-# }
 
 
 class Speaker:  # output
@@ -78,56 +48,6 @@ class Speaker:  # output
             self.engine.say(output)
             self.engine.runAndWait()
         print(f"Robot: {output}")
-
-
-# class CustomBubbleButton(BubbleButton):
-#     def add_text(self):
-#         app = App.get_running_app()
-#         index = app.root.text_input.cursor[0] - 1
-#         if self.text != "⌫":
-#             app.root.text_input.text = (
-#                 app.root.text_input.text[: index + 1]
-#                 + self.text
-#                 + app.root.text_input.text[index + 1 :]
-#             )
-#             app.root.text_input.cursor = (index + 2, 0)
-#         else:
-#             app.root.text_input.text = (
-#                 app.root.text_input.text[:index] + app.root.text_input.text[index + 1 :]
-#             )
-#             app.root.text_input.cursor = (index, 0)
-#
-#     pass
-#
-#
-# class NumericKeyboard(Bubble):
-#     def on_touch_up(self, touch):
-#         app = App.get_running_app()
-#         if not self.collide_point(*touch.pos) and not app.root.text_input.collide_point(
-#             *touch.pos
-#         ):
-#             app.root.remove_widget(app.root.bubb)
-#             app.root.text_input.focus = False
-#             delattr(app.root, "bubb")
-#
-#     def __init__(self, **kwargs):
-#         super(NumericKeyboard, self).__init__(**kwargs)
-#         self.create_bubble_button()
-#
-#     def create_bubble_button(self):
-#         numeric_keypad = ["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"]
-#         for x in numeric_keypad:
-#             bubb_btn = CustomBubbleButton(text=str(x))
-#             self.layout.add_widget(bubb_btn)
-#
-#
-# class BubbleShowcase(FloatLayout):
-#     def show_bubble(self, *l):
-#         if not hasattr(self, "bubb"):
-#             self.bubb = NumericKeyboard()
-#             self.bubb.arrow_pos = "bottom_mid"
-#             self.add_widget(self.bubb)
-#
 
 
 class ActionWidge(DragBehavior, Button):
@@ -208,41 +128,137 @@ class ActionWidge(DragBehavior, Button):
 
 
 class DriveWidge(ActionWidge):
-    drive_speed: int
-    duration: float
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.drive_speed = 0
-        self.duration = 0
+        self.speed_widge = TextInput()
+        self.speed_widge.input_type = "number"
+        self.speed_widge.text = "0"
+        self.duration_widge = TextInput()
+        self.duration_widge.input_type = "number"
+        self.duration_widge.text = "2"
+        self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        return f"{self.get_class_name()}: speed {self.drive_speed}: seconds {self.duration}: after_delay {self.after_delay}"
+        str(self.__class__).split(".")[-1]
+        return f"{self.get_class_name()}: speed {self.speed_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+
+    def build_settings(self):
+        inner_layout = BoxLayout()
+
+        block1 = BoxLayout()
+        block1.orientation = "vertical"
+        block1.size_hint_x = 0.3
+        label = Label()
+        label.text = "Speed [-3, 3] int"
+        label.size_hint_y = 0.2
+
+        block1.add_widget(label)
+        block1.add_widget(self.speed_widge)
+
+        block2 = BoxLayout()
+        block2.orientation = "vertical"
+        block2.size_hint_x = 0.3
+        label = Label()
+        label.text = "Duration Seconds float"
+        label.size_hint_y = 0.2
+
+        block2.add_widget(label)
+        block2.add_widget(self.duration_widge)
+
+        inner_layout.add_widget(block1)
+        inner_layout.add_widget(block2)
+        self.delay_block.size_hint_x = 0.3
+        inner_layout.add_widget(self.delay_block)
+        return inner_layout
 
     def set_settings(self, settings_layout: BoxLayout):
         self.set_settings_title()
-        # VKeyboard.layout = "numeric"
-        # player = VKeyboard()
-        # player.type
-        newButton = Button()
-        newButton.text = "Nothing to do here!\nI'm a base button!"
-        settings_layout.add_widget(TextInput())
+        settings_layout.add_widget(self.inner_layout)
+
+    def activate(self) -> None:
+        print("Driving")
+        if actually_move:
+            position = int(self.speed_widge.text)
+            while position < 0:
+                root_robot.forward()
+                time.sleep(0.05)
+                position += 1
+            while position > 0:
+                root_robot.backward()
+                time.sleep(0.05)
+                position += 1
+        time.sleep(float(self.delay_input.text))
+        root_robot.stop()
 
 
 # ------------------------------------------------------------------------------
 
 
 class TurnWidge(ActionWidge):
-    turn_speed: int
-    duration: float
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.turn_speed = 0
-        self.duration = 0
+        self.speed_widge = TextInput()
+        self.speed_widge.input_type = "number"
+        self.speed_widge.text = "0"
+        self.duration_widge = TextInput()
+        self.duration_widge.input_type = "number"
+        self.duration_widge.text = "2"
+        self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        return f"{self.get_class_name()}: speed {self.turn_speed}: seconds {self.duration}: after_delay {self.after_delay}"
+        str(self.__class__).split(".")[-1]
+        return f"{self.get_class_name()}: speed {self.speed_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+
+    def build_settings(self):
+        inner_layout = BoxLayout()
+
+        block1 = BoxLayout()
+        block1.orientation = "vertical"
+        block1.size_hint_x = 0.3
+        label = Label()
+        label.text = "Speed [-3, 3] int"
+        label.size_hint_y = 0.2
+
+        block1.add_widget(label)
+        block1.add_widget(self.speed_widge)
+
+        block2 = BoxLayout()
+        block2.orientation = "vertical"
+        block2.size_hint_x = 0.3
+        label = Label()
+        label.text = "Duration Seconds float"
+        label.size_hint_y = 0.2
+
+        block2.add_widget(label)
+        block2.add_widget(self.duration_widge)
+
+        inner_layout.add_widget(block1)
+        inner_layout.add_widget(block2)
+        self.delay_block.size_hint_x = 0.3
+        inner_layout.add_widget(self.delay_block)
+        return inner_layout
+
+    def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
+        settings_layout.add_widget(self.inner_layout)
+
+    def activate(self) -> None:
+        print("Turning")
+        if actually_move:
+            position = int(self.speed_widge.text)
+            while position < 0:
+                root_robot.turnRight()
+                time.sleep(0.05)
+                position += 1
+            while position > 0:
+                root_robot.turnLeft()
+                time.sleep(0.05)
+                position += 1
+        time.sleep(float(self.delay_input.text))
+        root_robot.stop()
+
+
+# ------------------------------------------------------------------------------
 
 
 class HeadTiltWidge(ActionWidge):
@@ -294,7 +310,7 @@ class HeadTiltWidge(ActionWidge):
         settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:
-        print("Moving waist")
+        print("Tilting Head")
         if actually_move:
             position = int(self.position_widge.text)
             while position < 0:
@@ -362,7 +378,7 @@ class HeadTurnWidge(ActionWidge):
         settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:
-        print("Moving waist")
+        print("Turning Head")
         if actually_move:
             position = int(self.position_widge.text)
             while position < 0:
