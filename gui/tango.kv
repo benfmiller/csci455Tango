@@ -10,7 +10,7 @@
             size: self.size
 
 
-<ActionButton>:
+<ActionWidge>:
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
     drag_distance: 10
@@ -21,18 +21,27 @@ GridLayout:
     BoxLayout:
         orientation: 'vertical'
         size_hint_x: 0.3
-        ActionButton:
+        ActionWidge:
             id: button1
             background_normal: "hello.jpeg"
-        ActionButton:
+        ActionWidge:
             id: button2
-            text: '1'
-        ActionButton:
-            id: button3
             text: '2'
-        ActionButton:
-            id: button4
+        ActionWidge:
+            id: button3
             text: '3'
+        ActionWidge:
+            id: button4
+            text: '4'
+        ActionWidge:
+            id: button5
+            text: '5'
+        ActionWidge:
+            id: button6
+            text: '6'
+        ActionWidge:
+            id: button7
+            text: '7'
     BoxLayout:
         id: middle
         size_hint_x: 0.05
@@ -40,11 +49,47 @@ GridLayout:
         id:mainDrop
         BoxLayout:
             orientation: 'vertical'
-            Label:
-                text: 'Do Nothing'
-            Label:
-                id: remove_zone
-                text: 'Remove Widget'
+            BoxLayout:
+                size_hint_y:0.3
+                Label:
+                    text: ''
+                Button:
+                    id: Clear Button
+                    text: 'Clear!'
+                    size_hint_x:0.3
+            BoxLayout:
+                PlaceHolderButton:
+                    id: place1
+                    text: '1'
+                PlaceHolderButton:
+                    id: place2
+                    text: '2'
+                PlaceHolderButton:
+                    id: place3
+                    text: '3'
+                PlaceHolderButton:
+                    id: place4
+                    text: '4'
+                PlaceHolderButton:
+                    id: place5
+                    text: '5'
+                PlaceHolderButton:
+                    id: place6
+                    text: '6'
+                PlaceHolderButton:
+                    id: place7
+                    text: '7'
+                PlaceHolderButton:
+                    id: place8
+                    text: '8'
+            BoxLayout:
+                size_hint_y:0.3
+                Label:
+                    text: ''
+                Button:
+                    id: activateButton
+                    text: 'Activate!'
+                    size_hint_x:0.3
     BoxLayout:
         id: rightest
         size_hint_x: 0.05

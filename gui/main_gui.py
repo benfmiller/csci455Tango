@@ -23,7 +23,16 @@ class PongBall(Widget):
         self.pos = Vector(*self.velocity) + self.pos
 
 
-class ActionButton(DragBehavior, Button):
+class PlaceHolderButton(Button):
+    def on_touch_down(self, touch):
+        print("I've been touched!")
+        return super().on_touch_down(touch)
+
+    def extra_func(self):
+        print("Calling extra_func")
+
+
+class ActionWidge(DragBehavior, Button):
     dragging = BooleanProperty(False)
     original_pos = ListProperty()
 
@@ -45,29 +54,15 @@ class ActionButton(DragBehavior, Button):
 
     def on_touch_up(self, touch):
         app = App.get_running_app()
+        # print(app.root.ids)
         if self.dragging:
             self.opacity = 1
             self.dragging = False
-            if self.collide_widget(app.root.ids.remove_zone):
-                self.parent.remove_widget(self)
-            else:
-                anim = Animation(pos=self.original_pos, duration=0.0)
-                anim.start(self)
+            if self.collide_widget(app.root.ids.button9):
+                app.root.ids["button9"].extra_func()
+            anim = Animation(pos=self.original_pos, duration=0.0)
+            anim.start(self)
         return super().on_touch_up(touch)
-
-    #
-    # # velocity of the ball on x and y axis
-    # velocity_x = NumericProperty(0)
-    # velocity_y = NumericProperty(0)
-    #
-    # # referencelist property so we can use ball.velocity as
-    # # a shorthand, just like e.g. w.pos for w.x and w.y
-    # velocity = ReferenceListProperty(velocity_x, velocity_y)
-    #
-    # # ``move`` function will move the ball one step. This
-    # #  will be called in equal intervals to animate the ball
-    # def move(self):
-    #     self.pos = Vector(*self.velocity) + self.pos
 
 
 class TangoApp(App):
@@ -78,16 +73,6 @@ class TangoApp(App):
 
 if __name__ == "__main__":
     TangoApp().run()
-
-# <PongBall>:
-#     size: 50, 50
-#     drag_rectangle: self.x, self.y, self.width, self.height
-#     drag_timeout: 10000
-#     drag_distance: 0
-#     canvas:
-#         Ellipse:
-#             pos: self.pos
-#             size: self.size
 
 # 1. Motors with speed, time and direction.
 # 2. Motors turn robot left, or right for x amount of seconds.
