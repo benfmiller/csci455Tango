@@ -187,7 +187,12 @@ class ActionWidge(DragBehavior, Button):
     def activate(self) -> None:
         print("Base Button Activated")
 
+    def set_settings_title(self):
+        app = App.get_running_app()
+        app.root.ids.settingsTitle.text = self.get_class_name()
+
     def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
         newButton = Button()
         newButton.text = "Nothing to do here!\nI'm a base button!"
         settings_layout.add_widget(newButton)
@@ -196,7 +201,7 @@ class ActionWidge(DragBehavior, Button):
         return "Base Action Widge" + super().__str__()
 
     def get_class_name(self) -> str:
-        return str(self.__class__).split(".")[-1]
+        return str(str(self.__class__).split(".")[-1])[:-2]
 
 
 # ------------------------------------------------------------------------------
@@ -215,6 +220,7 @@ class DriveWidge(ActionWidge):
         return f"{self.get_class_name()}: speed {self.drive_speed}: seconds {self.duration}: after_delay {self.after_delay}"
 
     def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
         # VKeyboard.layout = "numeric"
         # player = VKeyboard()
         # player.type
@@ -284,6 +290,7 @@ class HeadTiltWidge(ActionWidge):
         return inner_layout
 
     def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
         settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:
@@ -351,6 +358,7 @@ class HeadTurnWidge(ActionWidge):
         return inner_layout
 
     def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
         settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:
@@ -418,6 +426,7 @@ class WaistWidge(ActionWidge):
         return inner_layout
 
     def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
         settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:
@@ -465,6 +474,7 @@ class InputWidge(ActionWidge):
         return inner_layout
 
     def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
         settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:
@@ -535,6 +545,7 @@ class OutputWidge(ActionWidge):
         return inner_layout
 
     def set_settings(self, settings_layout: BoxLayout):
+        self.set_settings_title()
         settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:

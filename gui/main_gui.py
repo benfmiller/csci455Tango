@@ -104,6 +104,7 @@ class PlaceHolderButton(Button):
         if self.action is None:
             newButton = Button()
             newButton.text = "Nothing to do here!"
+            app.root.ids.settingsTitle.text = ""
             settings_layout.add_widget(newButton)
         else:
             self.action.set_settings(settings_layout)
