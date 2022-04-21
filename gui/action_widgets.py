@@ -1,5 +1,6 @@
 import time
 import pyttsx3
+import speech_recognition as sr
 from kivy.app import App
 from kivy.uix.widget import Widget
 
@@ -173,6 +174,9 @@ class ActionWidge(DragBehavior, Button):
         return str(self.__class__).split(".")[-1]
 
 
+# ------------------------------------------------------------------------------
+
+
 class DriveWidge(ActionWidge):
     drive_speed: int
     duration: float
@@ -192,6 +196,9 @@ class DriveWidge(ActionWidge):
         newButton = Button()
         newButton.text = "Nothing to do here!\nI'm a base button!"
         settings_layout.add_widget(TextInput())
+
+
+# ------------------------------------------------------------------------------
 
 
 class TurnWidge(ActionWidge):
@@ -217,8 +224,11 @@ class HeadTiltWidge(ActionWidge):
         self.duration = 0
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
+        str(self.__class__).split(".")[-1][:-2]
         return f"{self.get_class_name()}: position {self.position}: seconds {self.duration}: after_delay {self.after_delay}"
+
+
+# ------------------------------------------------------------------------------
 
 
 class HeadTurnWidge(ActionWidge):
@@ -235,6 +245,9 @@ class HeadTurnWidge(ActionWidge):
         return f"{self.get_class_name()}: position {self.position}: seconds {self.duration}: after_delay {self.after_delay}"
 
 
+# ------------------------------------------------------------------------------
+
+
 class WaistWidge(ActionWidge):
     position: int
     duration: float
@@ -249,16 +262,72 @@ class WaistWidge(ActionWidge):
         return f"{self.get_class_name()}: speed {self.position}: seconds {self.duration}: after_delay {self.after_delay}"
 
 
-class InputWidge(ActionWidge):
-    input_string: str
+# ------------------------------------------------------------------------------
 
+
+class InputWidge(ActionWidge):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.input_string = "Nothing"
+        self.input_widge = TextInput()
+        self.input_widge.text = "nothing"
+        self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
         str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: Wait for string '{self.input_string}': after_delay {self.after_delay}"
+        return f"{self.get_class_name()}: Listening for '{self.input_widge.text}': after_delay {self.delay_input.text}"
+
+    def build_settings(self):
+        inner_layout = BoxLayout()
+
+        block = BoxLayout()
+        block.size_hint_x = 0.6
+        block.orientation = "vertical"
+        label = Label()
+        label.text = "Input text to speak"
+        label.size_hint_y = 0.2
+        block.add_widget(label)
+        block.add_widget(self.input_widge)
+
+        inner_layout.add_widget(block)
+        self.delay_block.size_hint_x = 0.4
+        inner_layout.add_widget(self.delay_block)
+        return inner_layout
+
+    def set_settings(self, settings_layout: BoxLayout):
+        settings_layout.add_widget(self.inner_layout)
+
+    def activate(self) -> None:
+        print("Listening")
+        if actually_listen:
+            with sr.Microphone() as source:
+                r = sr.Recognizer()
+                r.adjust_for_ambient_noise(source)
+                r.energy_threshold = 3000
+                r.dynamic_energy_threshold = True
+                words = ""
+                while True:
+                    try:
+                        print("listening")
+                        audio = r.listen(source)
+                        print("Got audio")
+                        words = r.recognize_google(audio)
+                        print(words)
+                    except sr.UnknownValueError:
+                        print("Don't know that word")
+                    if self.input_widge.text.lower() in words:
+                        print("Words accepted!")
+                        break
+        else:
+            return
+            # while True:
+            #     words = input()
+            #     if self.input_widge.text.lower() in words:
+            #         print("Words accepted!")
+            #         break
+        time.sleep(float(self.delay_input.text))
+
+
+# ------------------------------------------------------------------------------
 
 
 class OutputWidge(ActionWidge):
