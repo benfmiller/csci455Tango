@@ -24,6 +24,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.bubble import Bubble, BubbleButton
 
 from kivy.uix.textinput import TextInput
+from kivy.core.window import Window
 
 actually_speak = False
 actually_listen = False
@@ -53,59 +54,75 @@ class Speaker:  # output
         print(f"Robot: {output}")
 
 
-class CustomBubbleButton(BubbleButton):
-    def add_text(self):
-        app = App.get_running_app()
-        index = app.root.text_input.cursor[0] - 1
-        if self.text != "⌫":
-            app.root.text_input.text = (
-                app.root.text_input.text[: index + 1]
-                + self.text
-                + app.root.text_input.text[index + 1 :]
-            )
-            app.root.text_input.cursor = (index + 2, 0)
-        else:
-            app.root.text_input.text = (
-                app.root.text_input.text[:index] + app.root.text_input.text[index + 1 :]
-            )
-            app.root.text_input.cursor = (index, 0)
-
-    pass
-
-
-class NumericKeyboard(Bubble):
-    def on_touch_up(self, touch):
-        app = App.get_running_app()
-        if not self.collide_point(*touch.pos) and not app.root.text_input.collide_point(
-            *touch.pos
-        ):
-            app.root.remove_widget(app.root.bubb)
-            app.root.text_input.focus = False
-            delattr(app.root, "bubb")
-
-    def __init__(self, **kwargs):
-        super(NumericKeyboard, self).__init__(**kwargs)
-        self.create_bubble_button()
-
-    def create_bubble_button(self):
-        numeric_keypad = ["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"]
-        for x in numeric_keypad:
-            bubb_btn = CustomBubbleButton(text=str(x))
-            self.layout.add_widget(bubb_btn)
-
-
-class BubbleShowcase(FloatLayout):
-    def show_bubble(self, *l):
-        if not hasattr(self, "bubb"):
-            self.bubb = NumericKeyboard()
-            self.bubb.arrow_pos = "bottom_mid"
-            self.add_widget(self.bubb)
+# class CustomBubbleButton(BubbleButton):
+#     def add_text(self):
+#         app = App.get_running_app()
+#         index = app.root.text_input.cursor[0] - 1
+#         if self.text != "⌫":
+#             app.root.text_input.text = (
+#                 app.root.text_input.text[: index + 1]
+#                 + self.text
+#                 + app.root.text_input.text[index + 1 :]
+#             )
+#             app.root.text_input.cursor = (index + 2, 0)
+#         else:
+#             app.root.text_input.text = (
+#                 app.root.text_input.text[:index] + app.root.text_input.text[index + 1 :]
+#             )
+#             app.root.text_input.cursor = (index, 0)
+#
+#     pass
+#
+#
+# class NumericKeyboard(Bubble):
+#     def on_touch_up(self, touch):
+#         app = App.get_running_app()
+#         if not self.collide_point(*touch.pos) and not app.root.text_input.collide_point(
+#             *touch.pos
+#         ):
+#             app.root.remove_widget(app.root.bubb)
+#             app.root.text_input.focus = False
+#             delattr(app.root, "bubb")
+#
+#     def __init__(self, **kwargs):
+#         super(NumericKeyboard, self).__init__(**kwargs)
+#         self.create_bubble_button()
+#
+#     def create_bubble_button(self):
+#         numeric_keypad = ["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"]
+#         for x in numeric_keypad:
+#             bubb_btn = CustomBubbleButton(text=str(x))
+#             self.layout.add_widget(bubb_btn)
+#
+#
+# class BubbleShowcase(FloatLayout):
+#     def show_bubble(self, *l):
+#         if not hasattr(self, "bubb"):
+#             self.bubb = NumericKeyboard()
+#             self.bubb.arrow_pos = "bottom_mid"
+#             self.add_widget(self.bubb)
+#
 
 
 class ActionWidge(DragBehavior, Button):
     dragging = BooleanProperty(False)
     original_pos = ListProperty()
     after_delay = 0.2
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.delay_input = TextInput()
+        self.delay_input.input_type = "number"
+        self.delay_input.text = "0.3"
+
+        self.delay_block = BoxLayout()
+        self.delay_block.orientation = "vertical"
+        label = Label()
+        label.text = "After Delay Seconds"
+        label.size_hint_y = 0.2
+        self.delay_block.add_widget(label)
+        self.delay_block.add_widget(self.delay_input)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -251,12 +268,13 @@ class OutputWidge(ActionWidge):
         super().__init__(**kwargs)
         self.output_widge = TextInput()
         self.output_widge.text = "I have nothing to say"
+        self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
         str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: Will say '{self.output_widge.text}': after_delay {self.after_delay}"
+        return f"{self.get_class_name()}: Will say '{self.output_widge.text}': after_delay {self.delay_input.text}"
 
-    def set_settings(self, settings_layout: BoxLayout):
+    def build_settings(self):
         # VKeyboard.layout = "numeric"
         # player = VKeyboard()
         # player.type
@@ -271,20 +289,15 @@ class OutputWidge(ActionWidge):
         block.add_widget(label)
         block.add_widget(self.output_widge)
 
-        block2 = BoxLayout()
-        block2.size_hint_x = 0.4
-        block2.orientation = "vertical"
-        label = Label()
-        label.text = "After Delay Seconds"
-        label.size_hint_y = 0.2
-        block2.add_widget(label)
-        block2.add_widget(NumericKeyboard())
-
         inner_layout.add_widget(block)
-        inner_layout.add_widget(block2)
+        self.delay_block.size_hint_x = 0.4
+        inner_layout.add_widget(self.delay_block)
+        return inner_layout
 
-        settings_layout.add_widget(inner_layout)
+    def set_settings(self, settings_layout: BoxLayout):
+        settings_layout.add_widget(self.inner_layout)
 
     def activate(self) -> None:
         print("Speaking")
         self.my_speaker.output(self.output_widge.text)
+        time.sleep(float(self.delay_input.text))
