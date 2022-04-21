@@ -7,86 +7,88 @@
     drag_distance: 10
     on_release: print(f'Drag Button {self.text} pressed')
 
-<MainLayout>:
-    cols: 4
-    BoxLayout:
-        orientation: 'vertical'
-        size_hint_x: 0.3
-        DriveWidge:
-            id: button1
-            # background_normal: "hello.jpeg"
-            allow_stretch: True
-            keep_ratio: True
-            text: 'Drive!'
-        TurnWidge:
-            id: button2
-            text: 'Turn'
-        HeadTiltWidge:
-            id: button3
-            text: 'Head Tilt'
-        HeadTurnWidge:
-            id: button4
-            text: 'Head Turn'
-        WaistWidge:
-            id: button5
-            text: 'Waist Turn'
-        InputWidge:
-            id: button6
-            text: 'Human speech input'
-        OutputWidge:
-            id: button7
-            text: 'Robot speak'
-    BoxLayout:
-        id: middle
-        size_hint_x: 0.05
-    BoxLayout:
-        id:mainDrop
-        BoxLayout:
-            orientation: 'vertical'
+ScreenManager:
+    Screen:
+        GridLayout:
+            cols: 4
             BoxLayout:
-                size_hint_y:0.3
-                Label:
-                    text: ''
-                ClearButton:
-                    id: clearButton
-                    text: 'Clear!'
-                    size_hint_x:0.3
-            BoxLayout:
-                id: placeHolderLayout
-                PlaceHolderButton:
-                    id: place1
-                    text: '1'
+                orientation: 'vertical'
+                size_hint_x: 0.3
+                DriveWidge:
+                    id: button1
+                    # background_normal: "hello.jpeg"
                     allow_stretch: True
                     keep_ratio: True
-                PlaceHolderButton:
-                    id: place2
-                    text: '2'
-                PlaceHolderButton:
-                    id: place3
-                    text: '3'
-                PlaceHolderButton:
-                    id: place4
-                    text: '4'
-                PlaceHolderButton:
-                    id: place5
-                    text: '5'
-                PlaceHolderButton:
-                    id: place6
-                    text: '6'
-                PlaceHolderButton:
-                    id: place7
-                    text: '7'
-                PlaceHolderButton:
-                    id: place8
-                    text: '8'
+                    text: 'Drive!'
+                TurnWidge:
+                    id: button2
+                    text: 'Turn'
+                HeadTiltWidge:
+                    id: button3
+                    text: 'Head Tilt'
+                HeadTurnWidge:
+                    id: button4
+                    text: 'Head Turn'
+                WaistWidge:
+                    id: button5
+                    text: 'Waist Turn'
+                InputWidge:
+                    id: button6
+                    text: 'Human speech input'
+                OutputWidge:
+                    id: button7
+                    text: 'Robot speak'
             BoxLayout:
-                size_hint_y:0.3
-                Label:
-                    text: ''
-                ActivateButton:
-                    id: activateButton
-                    text: 'Activate!'
-                    size_hint_x:0.3
-    BoxLayout:
-        id: rightest
-        size_hint_x: 0.05
+                id: middle
+                size_hint_x: 0.05
+            BoxLayout:
+                id:mainDrop
+                BoxLayout:
+                    orientation: 'vertical'
+                    BoxLayout:
+                        size_hint_y:0.3
+                        Label:
+                            text: ''
+                        ClearButton:
+                            id: clearButton
+                            text: 'Clear!'
+                            size_hint_x:0.3
+                    BoxLayout:
+                        id: placeHolderLayout
+                        PlaceHolderButton:
+                            id: place1
+                            text: '1'
+                            allow_stretch: True
+                            keep_ratio: True
+                        PlaceHolderButton:
+                            id: place2
+                            text: '2'
+                        PlaceHolderButton:
+                            id: place3
+                            text: '3'
+                        PlaceHolderButton:
+                            id: place4
+                            text: '4'
+                        PlaceHolderButton:
+                            id: place5
+                            text: '5'
+                        PlaceHolderButton:
+                            id: place6
+                            text: '6'
+                        PlaceHolderButton:
+                            id: place7
+                            text: '7'
+                        PlaceHolderButton:
+                            id: place8
+                            text: '8'
+                    BoxLayout:
+                        size_hint_y:0.3
+                        Label:
+                            text: ''
+                        ActivateButton:
+                            id: activateButton
+                            text: 'Activate!'
+                            size_hint_x:0.3
+            BoxLayout:
+                id: rightest
+                size_hint_x: 0.05
