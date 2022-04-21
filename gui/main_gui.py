@@ -149,11 +149,15 @@ class PlaceHolderButton(Button):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
             print("I've been touched!")
+            app = App.get_running_app()
+            # print(app.root.ids)
+            # print(app.root.switch_to)
+            # app.root.switch_to(app.root.ids.settingsScreen)
+            app.root.current = "settingsScreen"
+            # app.root.current = "seetingsScreen"
+            # app.root.ids.screenManager.current = "seetingsScreen"
 
             # self.add_widget(MenuWidget())
-            sm = ScreenManager()
-            sm.add_widget(Screen())
-            sm.switch_to(Screen())
         return super().on_touch_down(touch)
 
     def set_action(self, actionWidge: ActionWidge):
