@@ -6,7 +6,9 @@ from kivy.uix.widget import Widget
 # from kivy.properties import NumericProperty, ReferenceListProperty
 # from kivy.vector import Vector
 from kivy.uix.behaviors import DragBehavior
-from kivy.uix.screenmanager import ScreenManager, Screen
+
+# from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
 
 # from kivy.uix.gridlayout import GridLayout
 
@@ -62,22 +64,22 @@ class ClearButton(Button):
 class ActivateButton(Button):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            print("Activating setup!")
+            print("\n********Activating setup********!")
             app = App.get_running_app()
             # num = len(app.root.ids.placeHolderLayout.children)
             num = 1
             for button in app.root.ids.placeHolderLayout.children[::-1]:
-                print(
-                    f"Running box {num}: category {button.category}: attributes: {button.attributes}"
-                )
+                print(f"Running box {num}: category {button.action}")
+                if button.action is not None:
+                    button.action.activate()
                 num += 1
+            print("********Activation Done********\n")
         return super().on_touch_down(touch)
 
 
 class ActionWidge(DragBehavior, Button):
     dragging = BooleanProperty(False)
     original_pos = ListProperty()
-    action_type = None
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -113,43 +115,119 @@ class ActionWidge(DragBehavior, Button):
             anim.start(self)
         return super().on_touch_up(touch)
 
+    def activate(self) -> None:
+        print("Base Button Activated")
+
+    def set_settings(self, settings_layout: BoxLayout):
+        newButton = Button()
+        newButton.text = "Nothing to do here!\nI'm a base button!"
+        settings_layout.add_widget(newButton)
+
+    def __str__(self) -> str:
+        return "Base Action Widge" + super().__str__()
+
+    def get_class_name(self) -> str:
+        return str(self.__class__).split(".")[-1]
+
 
 class DriveWidge(ActionWidge):
-    action_type = "drive"
+    drive_speed: int
+    duration: float
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.drive_speed = 0
+        self.duration = 0
+
+    def __str__(self) -> str:
+        return f"{self.get_class_name()}: speed {self.drive_speed}: seconds {self.duration}"
 
 
 class TurnWidge(ActionWidge):
-    action_type = "turn"
+    turn_speed: int
+    duration: float
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.turn_speed = 0
+        self.duration = 0
+
+    def __str__(self) -> str:
+        return (
+            f"{self.get_class_name()}: speed {self.turn_speed}: seconds {self.duration}"
+        )
 
 
 class HeadTiltWidge(ActionWidge):
-    action_type = "head tilt"
+    position: int
+    duration: float
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.position = 0
+        self.duration = 0
+
+    def __str__(self) -> str:
+        str(self.__class__).split(".")[-1]
+        return f"{self.get_class_name()}: position {self.position}: seconds {self.duration}"
 
 
 class HeadTurnWidge(ActionWidge):
-    action_type = "head turn"
+    position: int
+    duration: float
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.position = 0
+        self.duration = 0
+
+    def __str__(self) -> str:
+        str(self.__class__).split(".")[-1]
+        return f"{self.get_class_name()}: position {self.position}: seconds {self.duration}"
 
 
 class WaistWidge(ActionWidge):
-    action_type = "waist turn"
+    position: int
+    duration: float
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.position = 0
+        self.duration = 0
+
+    def __str__(self) -> str:
+        str(self.__class__).split(".")[-1]
+        return (
+            f"{self.get_class_name()}: speed {self.position}: seconds {self.duration}"
+        )
 
 
 class InputWidge(ActionWidge):
-    action_type = "input"
+    input_string: str
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.input_string = "Nothing"
+
+    def __str__(self) -> str:
+        str(self.__class__).split(".")[-1]
+        return f"{self.get_class_name()}: Wait for string '{self.input_string}'"
 
 
 class OutputWidge(ActionWidge):
-    action_type = "output"
+    output_string: str
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.output_string = "I have nothing to say"
 
-class MenuWidget(Widget):
-    pass
+    def __str__(self) -> str:
+        str(self.__class__).split(".")[-1]
+        return f"{self.get_class_name()}: Will say '{self.output_string}'"
 
 
 class PlaceHolderButton(Button):
-    num = 0
-    category = None
-    attributes = None
+    action = None
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -157,13 +235,6 @@ class PlaceHolderButton(Button):
             app = App.get_running_app()
             self.set_settings_screen()
             app.root.current = "settingsScreen"
-            # print(app.root.ids)
-            # print(app.root.switch_to)
-            # app.root.switch_to(app.root.ids.settingsScreen)
-            # app.root.current = "seetingsScreen"
-            # app.root.ids.screenManager.current = "seetingsScreen"
-
-            # self.add_widget(MenuWidget())
         return super().on_touch_down(touch)
 
     def set_settings_screen(self):
@@ -173,34 +244,26 @@ class PlaceHolderButton(Button):
         for widge in list(settings_layout.children):
             settings_layout.remove_widget(widge)
 
-        settings_layout.add_widget(Button())
-        settings_layout.add_widget(Button())
-        settings_layout.add_widget(Button())
-        settings_layout.add_widget(Button())
+        if self.action is None:
+            newButton = Button()
+            newButton.text = "Nothing to do here!"
+            settings_layout.add_widget(newButton)
+        else:
+            self.action.set_settings(settings_layout)
 
     def set_action(self, actionWidge: ActionWidge):
-        # print(actionWidge)
-        self.category = actionWidge.action_type
+        self.action = actionWidge
 
+        # TODO: add action images
         self.text = actionWidge.text
         # print(self.background_normal)
         # print(type(self.background_normal))
-        self.background_normal = "./hello.jpeg"
+        self.background_normal = actionWidge.background_normal
 
     def reset(self):
-        # TODO: reset text
-        self.category = None
+        self.action = None
         self.attributes = None
         self.background_normal = "atlas://data/images/defaulttheme/button"
-        # print(self.parent.ids)
-
-        # print(self.find_id)
-
-    # def find_id(self, parent, widget):
-    #     for id, obj in parent.ids.items():
-    #         if obj == widget:
-    #             print(id)
-    #             return id
 
 
 class TangoApp(App):

@@ -1,5 +1,5 @@
 #:kivy 1.0.9
-#:import CardTransition kivy.uix.screenmanager.NoTransition
+#:import NoTransition kivy.uix.screenmanager.NoTransition
 
 
 <ActionWidge>:
@@ -10,7 +10,7 @@
 
 ScreenManager:
     id: screenManager
-    # transition:  NoTransition()
+    transition: NoTransition()
     Screen:
         id: mainScreen
         name: "mainScreen"
