@@ -5,7 +5,8 @@ from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ReferenceListProperty
 from kivy.vector import Vector
 from kivy.uix.behaviors import DragBehavior
-from kivy.uix.label import Label
+
+# from kivy.uix.label import Label
 from kivy.uix.button import Button
 
 # Simple drag from a boxlayout onto a drop zone, animate the return if the drop zone is missed.
@@ -22,36 +23,7 @@ class PongBall(Widget):
         self.pos = Vector(*self.velocity) + self.pos
 
 
-class DragObj(DragBehavior, Widget):
-    dragging = BooleanProperty(False)
-    original_pos = ListProperty()
-
-    def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos):
-            print("on touch down")
-            self.original_pos = self.pos
-        return super().on_touch_down(touch)
-
-    def on_touch_move(self, touch):
-        if touch.grab_current is self:
-            self.opacity = 0.4
-            self.dragging = True
-        return super().on_touch_move(touch)
-
-    def on_touch_up(self, touch):
-        app = App.get_running_app()
-        if self.dragging:
-            self.opacity = 1
-            self.dragging = False
-            if self.collide_widget(app.root.ids.remove_zone):
-                self.parent.remove_widget(self)
-            else:
-                anim = Animation(pos=self.original_pos, duration=1)
-                anim.start(self)
-        return super().on_touch_up(touch)
-
-
-class DragButton(DragBehavior, Button):
+class ActionButton(DragBehavior, Button):
     dragging = BooleanProperty(False)
     original_pos = ListProperty()
 
@@ -79,7 +51,7 @@ class DragButton(DragBehavior, Button):
             if self.collide_widget(app.root.ids.remove_zone):
                 self.parent.remove_widget(self)
             else:
-                anim = Animation(pos=self.original_pos, duration=0.5)
+                anim = Animation(pos=self.original_pos, duration=0.0)
                 anim.start(self)
         return super().on_touch_up(touch)
 
@@ -116,3 +88,11 @@ if __name__ == "__main__":
 #         Ellipse:
 #             pos: self.pos
 #             size: self.size
+
+# 1. Motors with speed, time and direction.
+# 2. Motors turn robot left, or right for x amount of seconds.
+# 3. Head tilt both directions
+# 4. Head pan both directions
+# 5. Waist turn both directions
+# 6. A wait for human speech input
+# 7. Talking, be able to type in what sentence you want to say and the robot says it.

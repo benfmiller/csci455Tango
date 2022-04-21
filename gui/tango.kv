@@ -10,32 +10,34 @@
             size: self.size
 
 
-<DragButton>:
+<ActionButton>:
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
     drag_distance: 10
     on_release: print(f'Drag Button {self.text} pressed')
 
 GridLayout:
-    cols: 2
+    cols: 4
     BoxLayout:
         orientation: 'vertical'
-        size_hint_x: 0.4
-        DragButton:
-            text: '0'
-        DragButton:
+        size_hint_x: 0.3
+        ActionButton:
+            id: button1
+            background_normal: "hello.jpeg"
+        ActionButton:
+            id: button2
             text: '1'
-        DragButton:
+        ActionButton:
+            id: button3
             text: '2'
-        DragButton:
+        ActionButton:
+            id: button4
             text: '3'
-    # BoxLayout:
-        # id: middle
     BoxLayout:
-        id:right
-        DragButton:
-            text: '0'
-            size_hint_x: 0.4
+        id: middle
+        size_hint_x: 0.05
+    BoxLayout:
+        id:mainDrop
         BoxLayout:
             orientation: 'vertical'
             Label:
@@ -43,3 +45,6 @@ GridLayout:
             Label:
                 id: remove_zone
                 text: 'Remove Widget'
+    BoxLayout:
+        id: rightest
+        size_hint_x: 0.05
