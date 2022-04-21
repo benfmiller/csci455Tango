@@ -269,7 +269,7 @@ class HeadTiltWidge(ActionWidge):
         self.position_widge.text = "0"
         self.duration_widge = TextInput()
         self.duration_widge.input_type = "number"
-        self.duration_widge.text = "0"
+        self.duration_widge.text = "1"
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
@@ -337,7 +337,7 @@ class HeadTurnWidge(ActionWidge):
         self.position_widge.text = "0"
         self.duration_widge = TextInput()
         self.duration_widge.input_type = "number"
-        self.duration_widge.text = "0"
+        self.duration_widge.text = "1"
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
@@ -405,7 +405,7 @@ class WaistWidge(ActionWidge):
         self.position_widge.text = "0"
         self.duration_widge = TextInput()
         self.duration_widge.input_type = "number"
-        self.duration_widge.text = "0"
+        self.duration_widge.text = "1"
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
