@@ -154,8 +154,9 @@ class DriveWidge(ActionWidge):
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: speed {self.speed_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        # this breaks when creating widgets from collision event
+        # return f"{self.get_class_name()}: speed {self.speed_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        return ""
 
     def build_settings(self):
         inner_layout = BoxLayout()
@@ -223,8 +224,9 @@ class TurnWidge(ActionWidge):
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: speed {self.speed_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        # this breaks when creating widgets from collision event
+        # return f"{self.get_class_name()}: speed {self.speed_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        return ""
 
     def build_settings(self):
         inner_layout = BoxLayout()
@@ -292,8 +294,9 @@ class HeadTiltWidge(ActionWidge):
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        # this breaks when creating widgets from collision event
+        # return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        return ""
 
     def build_settings(self):
         inner_layout = BoxLayout()
@@ -361,8 +364,9 @@ class HeadTurnWidge(ActionWidge):
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        # this breaks when creating widgets from collision event
+        # return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        return ""
 
     def build_settings(self):
         inner_layout = BoxLayout()
@@ -410,7 +414,11 @@ class HeadTurnWidge(ActionWidge):
                 time.sleep(0.05)
                 position -= 1
         time.sleep(float(self.duration_widge.text))
-        if self.delay_input.text == "0" and actually_move:
+        if self.delay_input.text != "0" and actually_move:
+            root_robot.neutral()
+            time.sleep(0.1)
+            root_robot.neutral()
+            time.sleep(0.1)
             root_robot.neutral()
         time.sleep(float(self.delay_input.text))
 
@@ -430,8 +438,9 @@ class WaistWidge(ActionWidge):
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        # this breaks when creating widgets from collision event
+        # return f"{self.get_class_name()}: position {self.position_widge.text}: seconds {self.duration_widge.text}: after_delay {self.delay_input.text}"
+        return ""
 
     def build_settings(self):
         inner_layout = BoxLayout()
@@ -491,8 +500,9 @@ class InputWidge(ActionWidge):
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: Listening for '{self.input_widge.text}': after_delay {self.delay_input.text}"
+        # this breaks when creating widgets from collision event
+        # return f"{self.get_class_name()}: Listening for '{self.input_widge.text}': after_delay {self.delay_input.text}"
+        return ""
 
     def build_settings(self):
         inner_layout = BoxLayout()
@@ -559,8 +569,9 @@ class OutputWidge(ActionWidge):
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:
-        str(self.__class__).split(".")[-1]
-        return f"{self.get_class_name()}: Will say '{self.output_widge.text}': after_delay {self.delay_input.text}"
+        # this breaks when creating widgets from collision event
+        # return f"{self.get_class_name()}: Will say '{self.output_widge.text}': after_delay {self.delay_input.text}"
+        return ""
 
     def build_settings(self):
         # VKeyboard.layout = "numeric"

@@ -9,7 +9,17 @@ from kivy.core.image import Image
 from kivy.uix.button import Button
 from kivy.config import Config
 from kivy.uix.widget import Widget
-from action_widgets import ActionWidge, root_robot
+from action_widgets import (
+    ActionWidge,
+    root_robot,
+    DriveWidge,
+    TurnWidge,
+    HeadTiltWidge,
+    HeadTurnWidge,
+    WaistWidge,
+    InputWidge,
+    OutputWidge,
+)
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty
 from kivy.clock import Clock
@@ -84,7 +94,14 @@ def activate_thread():
         button.background_color = (1.0, 1.0, 0.2, 1.0)
         if button.action is not None:
             button.action.activate()
-        time.sleep(0.2)
+        if root_robot is not None:
+            root_robot.stop()
+            time.sleep(0.05)
+            root_robot.forward()
+            time.sleep(0.05)
+            root_robot.stop()
+
+        time.sleep(0.1)
         button.background_color = (1.0, 1.0, 1.0, 1.0)
         num += 1
     app.root.ids.backToMainScreen.disabled = False
@@ -188,7 +205,23 @@ class PlaceHolderButton(Button):
             self.action.set_settings(settings_layout)
 
     def set_action(self, actionWidge: ActionWidge):
-        self.action = actionWidge
+        print("here")
+        if isinstance(actionWidge, DriveWidge):
+            self.action = DriveWidge()
+        elif isinstance(actionWidge, TurnWidge):
+            self.action = TurnWidge()
+        elif isinstance(actionWidge, HeadTiltWidge):
+            self.action = HeadTiltWidge()
+        elif isinstance(actionWidge, HeadTurnWidge):
+            self.action = HeadTurnWidge()
+        elif isinstance(actionWidge, WaistWidge):
+            self.action = WaistWidge()
+        elif isinstance(actionWidge, InputWidge):
+            self.action = InputWidge()
+        elif isinstance(actionWidge, OutputWidge):
+            self.action = OutputWidge()
+        print("here")
+        # self.action.constructor()
         self.text = actionWidge.text
         self.background_normal = actionWidge.background_normal
 
