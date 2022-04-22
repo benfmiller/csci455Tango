@@ -17,9 +17,9 @@ from kivy.uix.bubble import Bubble, BubbleButton
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 
-actually_speak = False
-actually_listen = False
-actually_move = False
+actually_speak = True
+actually_listen = True
+actually_move = True
 
 if actually_move:
     from robot import Tango
