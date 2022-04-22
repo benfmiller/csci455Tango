@@ -15,9 +15,9 @@ from kivy.uix.bubble import Bubble, BubbleButton
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 
-actually_speak = True
-actually_listen = True
-actually_move = True
+actually_speak = False
+actually_listen = False
+actually_move = False
 
 if actually_move:
     from robot import Tango
@@ -479,7 +479,7 @@ class InputWidge(ActionWidge):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.input_widge = TextInput()
-        self.input_widge.text = "nothing"
+        self.input_widge.text = "continue"
         self.inner_layout = self.build_settings()
 
     def __str__(self) -> str:

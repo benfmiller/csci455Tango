@@ -8,10 +8,12 @@ from kivy.config import Config
 from action_widgets import ActionWidge, root_robot
 from kivy.core.window import Window
 
-Window.maximize()
 
-Config.set("kivy", "keyboard_mode", "systemanddock")
-Config.write()
+if root_robot is not None:
+    Window.maximize()
+    Config.set("kivy", "keyboard_mode", "systemanddock")
+    Config.write()
+
 # Config.set("graphics", "width", "200")
 # Config.set("graphics", "height", "200")
 
