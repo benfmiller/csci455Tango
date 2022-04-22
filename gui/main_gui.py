@@ -5,10 +5,15 @@ import time
 from threading import Thread
 
 from kivy.app import App
+from kivy.core.image import Image
 from kivy.uix.button import Button
 from kivy.config import Config
+from kivy.uix.widget import Widget
 from action_widgets import ActionWidge, root_robot
 from kivy.core.window import Window
+from kivy.properties import ObjectProperty
+from kivy.clock import Clock
+from kivy.uix.screenmanager import ScreenManager
 
 
 if root_robot is not None:
@@ -18,14 +23,6 @@ if root_robot is not None:
 
 # Config.set("graphics", "width", "200")
 # Config.set("graphics", "height", "200")
-
-# 1. Motors with speed, time and direction.
-# 2. Motors turn robot left, or right for x amount of seconds.
-# 3. Head tilt both directions
-# 4. Head pan both directions
-# 5. Waist turn both directions
-# 6. A wait for human speech input
-# 7. Talking, be able to type in what sentence you want to say and the robot says it.
 
 num_placeholders = 8
 
@@ -72,7 +69,6 @@ def set_main_placeholders_back():
         placeholder_layout.remove_widget(widge)
     new_widge_list = list(app.root.ids.activateWidgetLayout.children)[::-1]
     activate_layout = app.root.ids.activateWidgetLayout
-    print(activate_layout.children)
     for widge in list(activate_layout.children):
         activate_layout.remove_widget(widge)
     for widge in new_widge_list:
@@ -81,20 +77,18 @@ def set_main_placeholders_back():
 
 def activate_thread():
     app = App.get_running_app()
+    Clock.schedule_interval(app.root.ids.activateAnimation.update, 1.0 / 60.0)
     num = 1
+    # TODO: set animation
     app.root.ids.backToMainScreen.disabled = True
     for button in app.root.ids.activateWidgetLayout.children[::-1]:
         print(f"Running box {num}: category {button.action}")
-        # temp_background = button.background_normal
-        # button.background_normal = ""
         button.background_color = (1.0, 1.0, 0.2, 1.0)
         if button.action is not None:
             button.action.activate()
         time.sleep(0.5)
         button.background_color = (1.0, 1.0, 1.0, 1.0)
-        # button.background_normal = temp_background
         num += 1
-
     app.root.ids.backToMainScreen.disabled = False
     if root_robot is not None:
         print("Neutralizing robot")
@@ -132,6 +126,35 @@ class ActivateButton(Button):
             print("********Activation Done********\n")
             self.last_ran = time.time()
         return super().on_touch_down(touch)
+
+
+class AnimatingImage(Button):
+    time = 0.0
+    rate = 0.2
+    frame = 1
+
+    def update(self, dt):
+        self.time += dt
+        if self.time > self.rate:
+            self.time -= self.rate
+            self.source = "atlas://robot/frame" + str(self.frame)
+            # self.background_normal = "hello.jpeg"
+            self.frame = self.frame + 1
+            if self.frame > 4:
+                self.frame = 1
+        print("Hey!")
+
+
+class AnimationScreen(Widget):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.robot = AnimatingImage()
+        self.robot.background_normal = "atlas://robot/frame1"
+        # self.background_normal = self.robot.source
+        self.add_widget(self.robot)
+
+    def update(self, dt):
+        self.robot.update(dt)
 
 
 class ReturnScreenButton(Button):
@@ -181,11 +204,15 @@ class PlaceHolderButton(Button):
         self.background_normal = "atlas://data/images/defaulttheme/button"
 
 
+class MyScreenManager(ScreenManager):
+    ...
+
+
 class TangoApp(App):
     title = "Group 26 Tango"
 
     def build(self):
-        return super().build()
+        return MyScreenManager()
 
 
 if __name__ == "__main__":

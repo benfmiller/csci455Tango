@@ -1,4 +1,4 @@
-#:kivy 1.0.9
+#:kivy 1.9.0
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 
 
@@ -8,7 +8,12 @@
     drag_distance: 10
     on_release: print(f'Drag Button {self.text} pressed')
 
-ScreenManager:
+# <AnimatingImage>:
+    # id: robot_1
+    # size: 450, 722
+    # center: root.width / 2, root.height / 2
+#
+<ScreenManager>:
     id: screenManager
     transition: NoTransition()
     Screen:
@@ -152,8 +157,7 @@ ScreenManager:
             BoxLayout:
                 BoxLayout:
                     size_hint_x: 0.3
-                Button:
-                    text: "Animation!"
+                AnimationScreen:
                     id: activateAnimation
                 BoxLayout:
                     orientation: "vertical"
