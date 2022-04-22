@@ -2,6 +2,8 @@
 
 
 import time
+from threading import Thread
+
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.config import Config
@@ -50,32 +52,38 @@ class ClearButton(Button):
         return super().on_touch_down(touch)
 
 
+def activate_thread():
+    # time.sleep(0.05)
+
+    app = App.get_running_app()
+    # num = len(app.root.ids.placeHolderLayout.children)
+    num = 1
+    for button in app.root.ids.placeHolderLayout.children[::-1]:
+        print(f"Running box {num}: category {button.action}")
+        # temp_background = button.background_normal
+        # button.background_normal = ""
+        button.background_color = (1.0, 1.0, 0.0, 1.0)
+        if button.action is not None:
+            button.action.activate()
+        time.sleep(0.5)
+        button.background_color = (1.0, 1.0, 1.0, 1.0)
+        # button.background_normal = temp_background
+        num += 1
+
+
 class ActivateButton(Button):
     last_ran = time.time()
+    running = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # self.bind(on_press=self.callback)
 
     def on_touch_down(self, touch):
+        global running_activator
         if self.collide_point(*touch.pos) and time.time() - self.last_ran > 1:
             print("\n********Activating setup********!")
-            # time.sleep(0.05)
-
-            app = App.get_running_app()
-            # num = len(app.root.ids.placeHolderLayout.children)
-            num = 1
-            for button in app.root.ids.placeHolderLayout.children[::-1]:
-                print(f"Running box {num}: category {button.action}")
-                # temp_background = button.background_normal
-                # button.background_normal = ""
-                # button.background_color = (1.0, 1.0, 0.0, 1.0)
-                if button.action is not None:
-                    button.action.activate()
-                # time.sleep(0.5)
-                # button.background_color = (1.0, 1.0, 1.0, 1.0)
-                # button.background_normal = temp_background
-                num += 1
+            Thread(target=activate_thread).start()
             print("********Activation Done********\n")
 
             if root_robot is not None:
