@@ -142,3 +142,25 @@ ScreenManager:
                         id: returnButton
                         text: "Return"
                         size_hint_y: 0.25
+    Screen:
+        name: "activateScreen"
+        BoxLayout:
+            orientation: 'vertical'
+            BoxLayout:
+                id: activateWidgetLayout
+                size_hint_y: 0.3
+            BoxLayout:
+                BoxLayout:
+                    size_hint_x: 0.3
+                Button:
+                    text: "Animation!"
+                    id: activateAnimation
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_x: 0.3
+                    Label:
+                        text: ""
+                    ReturnScreenButton:
+                        id: backToMainScreen
+                        text: "Return"
+                        size_hint_y: 0.3
