@@ -120,7 +120,9 @@ class PlaceHolderButton(Button):
         if self.action is None:
             newButton = Button()
             newButton.text = "Nothing to do here!"
-            app.root.ids.settingsTitle.text = ""
+            app.root.ids.settingsTitleText.text = ""
+            app.root.ids.settingsTitleImage.background_normal = ""
+            app.root.ids.settingsTitleImage.background_color = (0, 0, 0, 0)
             settings_layout.add_widget(newButton)
         else:
             self.action.set_settings(settings_layout)
@@ -149,10 +151,3 @@ class TangoApp(App):
 
 if __name__ == "__main__":
     TangoApp().run()
-
-if actually_move:
-    from robot import Tango
-
-    root_robot = Tango()
-else:
-    root_robot = None

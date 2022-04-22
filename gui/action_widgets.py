@@ -1,4 +1,5 @@
 import time
+from kivy.core.image import Image
 import pyttsx3
 import speech_recognition as sr
 from kivy.app import App
@@ -7,6 +8,7 @@ from kivy.uix.behaviors import DragBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+import kivy.uix.button
 from kivy.properties import BooleanProperty, ListProperty
 from kivy.animation import Animation
 from kivy.uix.vkeyboard import VKeyboard
@@ -68,14 +70,18 @@ class ActionWidge(DragBehavior, Button):
         self.delay_input = TextInput()
         self.delay_input.input_type = "number"
         self.delay_input.text = "0.3"
+        # self.delay_input.size_hint_y = 0.4
 
         self.delay_block = BoxLayout()
         self.delay_block.orientation = "vertical"
         label = Label()
         label.text = "After Delay Seconds"
         label.size_hint_y = 0.2
+        # image_button = ImageButton("./assets/settingsICONS/delayICON.png")
+        # image_button.size_hint_min_y = 0.3
         self.delay_block.add_widget(label)
         self.delay_block.add_widget(self.delay_input)
+        # self.delay_block.add_widget(image_button)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -116,7 +122,9 @@ class ActionWidge(DragBehavior, Button):
 
     def set_settings_title(self):
         app = App.get_running_app()
-        app.root.ids.settingsTitle.text = self.get_class_name()
+        app.root.ids.settingsTitleText.text = self.get_class_name()
+        app.root.ids.settingsTitleImage.background_normal = self.background_normal
+        app.root.ids.settingsTitleImage.background_color = (1, 1, 1, 1)
 
     def set_settings(self, settings_layout: BoxLayout):
         self.set_settings_title()

@@ -18,40 +18,37 @@ ScreenManager:
             cols: 4
             BoxLayout:
                 orientation: 'vertical'
-                size_hint_x: 0.3
+                size_hint_x: 0.2
                 DriveWidge:
                     id: button1
-                    # background_normal: "hello.jpeg"
-                    allow_stretch: True
-                    keep_ratio: True
-                    text: 'Drive!'
+                    background_normal: "./assets/robotICONS/robotMotor.png"
                 TurnWidge:
                     id: button2
-                    text: 'Turn'
+                    background_normal: "./assets/robotICONS/robotTurn.png"
                 HeadTiltWidge:
                     id: button3
-                    text: 'Head Tilt'
+                    background_normal: "./assets/robotICONS/robotheadtilt.png"
                 HeadTurnWidge:
                     id: button4
-                    text: 'Head Turn'
+                    background_normal: "./assets/robotICONS/robotheadturn.png"
                 WaistWidge:
                     id: button5
-                    text: 'Waist Turn'
+                    background_normal: "./assets/robotICONS/robotwaistturn.png"
                 InputWidge:
                     id: button6
-                    text: 'Human speech input'
+                    background_normal: "./assets/robotICONS/robotWaitForSpeech.png"
                 OutputWidge:
                     id: button7
-                    text: 'Robot speak'
+                    background_normal: "./assets/robotICONS/robotTalkingKeyboard.png"
             BoxLayout:
                 id: middle
-                size_hint_x: 0.05
+                size_hint_x: 0.03
             BoxLayout:
                 id:mainDrop
                 BoxLayout:
                     orientation: 'vertical'
                     BoxLayout:
-                        size_hint_y:0.3
+                        size_hint_y:0.4
                         Label:
                             text: ''
                         ClearButton:
@@ -59,44 +56,55 @@ ScreenManager:
                             text: 'Clear!'
                             size_hint_x:0.3
                     BoxLayout:
-                        id: placeHolderLayout
-                        PlaceHolderButton:
-                            id: place1
-                            text: '1'
-                            allow_stretch: True
-                            keep_ratio: True
-                        PlaceHolderButton:
-                            id: place2
-                            text: '2'
-                        PlaceHolderButton:
-                            id: place3
-                            text: '3'
-                        PlaceHolderButton:
-                            id: place4
-                            text: '4'
-                        PlaceHolderButton:
-                            id: place5
-                            text: '5'
-                        PlaceHolderButton:
-                            id: place6
-                            text: '6'
-                        PlaceHolderButton:
-                            id: place7
-                            text: '7'
-                        PlaceHolderButton:
-                            id: place8
-                            text: '8'
+                        orientation: 'vertical'
+                        BoxLayout:
+                            size_hint_y: 0.45
+
+                        BoxLayout:
+                            size_hint_y: 0.4
+                            id: placeHolderLayout
+                            PlaceHolderButton:
+                                id: place1
+                                text: '1'
+                                # allow_stretch: True
+                                # keep_ratio: False
+                            PlaceHolderButton:
+                                id: place2
+                                text: '2'
+                            PlaceHolderButton:
+                                id: place3
+                                text: '3'
+                            PlaceHolderButton:
+                                id: place4
+                                text: '4'
+                            PlaceHolderButton:
+                                id: place5
+                                text: '5'
+                            PlaceHolderButton:
+                                id: place6
+                                text: '6'
+                            PlaceHolderButton:
+                                id: place7
+                                text: '7'
+                            PlaceHolderButton:
+                                id: place8
+                                text: '8'
+                        BoxLayout:
+                            size_hint_y: 0.45
                     BoxLayout:
-                        size_hint_y:0.3
+                        size_hint_y:0.4
                         Label:
                             text: ''
                         ActivateButton:
                             id: activateButton
                             text: 'Activate!'
                             size_hint_x:0.3
+                        Label:
+                            text: ''
+                            size_hint_x:0.3
             BoxLayout:
                 id: rightest
-                size_hint_x: 0.05
+                size_hint_x: 0.03
     Screen:
         # id: settingsScreen
         name: "settingsScreen"
@@ -107,9 +115,13 @@ ScreenManager:
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_x: 0.8
-                Label:
+                BoxLayout:
                     size_hint_y: 0.2
-                    id: settingsTitle
+                    Label:
+                        id: settingsTitleText
+                    Button:
+                        id: settingsTitleImage
+                        size_hint_x: 0.35
                 BoxLayout:
                     id: settingsLayout
                     size_hint_y: 0.6
