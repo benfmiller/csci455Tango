@@ -77,16 +77,14 @@ def set_main_placeholders_back():
 
 def activate_thread():
     app = App.get_running_app()
-    Clock.schedule_interval(app.root.ids.activateAnimation.update, 1.0 / 60.0)
     num = 1
-    # TODO: set animation
     app.root.ids.backToMainScreen.disabled = True
     for button in app.root.ids.activateWidgetLayout.children[::-1]:
         print(f"Running box {num}: category {button.action}")
         button.background_color = (1.0, 1.0, 0.2, 1.0)
         if button.action is not None:
             button.action.activate()
-        time.sleep(0.5)
+        time.sleep(0.2)
         button.background_color = (1.0, 1.0, 1.0, 1.0)
         num += 1
     app.root.ids.backToMainScreen.disabled = False
@@ -128,33 +126,29 @@ class ActivateButton(Button):
         return super().on_touch_down(touch)
 
 
-class AnimatingImage(Button):
+class AnimationScreen(Button):
     time = 0.0
-    rate = 0.2
+    rate = 0.5
     frame = 1
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # self.robot = AnimatingImage()
+        # self.robot.background_normal = "atlas://robot/frame1"
+        self.background_normal = "atlas://robot/frame1"
+        # self.background_normal = self.robot.source
+        # self.add_widget(self.robot)
+        Clock.schedule_interval(self.update, 1.0 / 60.0)
 
     def update(self, dt):
         self.time += dt
         if self.time > self.rate:
             self.time -= self.rate
-            self.source = "atlas://robot/frame" + str(self.frame)
+            self.background_normal = "atlas://robot/frame" + str(self.frame)
             # self.background_normal = "hello.jpeg"
             self.frame = self.frame + 1
             if self.frame > 4:
                 self.frame = 1
-        print("Hey!")
-
-
-class AnimationScreen(Widget):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.robot = AnimatingImage()
-        self.robot.background_normal = "atlas://robot/frame1"
-        # self.background_normal = self.robot.source
-        self.add_widget(self.robot)
-
-    def update(self, dt):
-        self.robot.update(dt)
 
 
 class ReturnScreenButton(Button):
