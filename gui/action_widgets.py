@@ -23,6 +23,13 @@ if actually_move:
     from robot import Tango
 
     root_robot = Tango()
+    time.sleep(0.2)
+    root_robot.forward()
+    time.sleep(0.05)
+    root_robot.stop()
+    time.sleep(0.2)
+    root_robot.neutral()
+
 else:
     root_robot = None
 
@@ -186,10 +193,11 @@ class DriveWidge(ActionWidge):
             while position > 0:
                 root_robot.backward()
                 time.sleep(0.05)
-                position += 1
-        time.sleep(float(self.delay_input.text))
+                position -= 1
+        time.sleep(float(self.duration_widge.text))
         if actually_move:
             root_robot.stop()
+        time.sleep(float(self.delay_input.text))
 
 
 # ------------------------------------------------------------------------------
@@ -254,10 +262,11 @@ class TurnWidge(ActionWidge):
             while position > 0:
                 root_robot.turnLeft()
                 time.sleep(0.05)
-                position += 1
-        time.sleep(float(self.delay_input.text))
+                position -= 1
+        time.sleep(float(self.duration_widge.text))
         if actually_move:
             root_robot.stop()
+        time.sleep(float(self.delay_input.text))
 
 
 # ------------------------------------------------------------------------------
@@ -322,10 +331,11 @@ class HeadTiltWidge(ActionWidge):
             while position > 0:
                 root_robot.tiltHeadUp()
                 time.sleep(0.05)
-                position += 1
-        time.sleep(float(self.delay_input.text))
-        if float(self.delay_input.text) == 0 and actually_move:
+                position -= 1
+        time.sleep(float(self.duration_widge.text))
+        if self.delay_input.text == "0" and actually_move:
             root_robot.neutral()
+        time.sleep(float(self.delay_input.text))
 
 
 # ------------------------------------------------------------------------------
@@ -390,10 +400,11 @@ class HeadTurnWidge(ActionWidge):
             while position > 0:
                 root_robot.turnHeadRight()
                 time.sleep(0.05)
-                position += 1
-        time.sleep(float(self.delay_input.text))
-        if float(self.delay_input.text) == 0 and actually_move:
+                position -= 1
+        time.sleep(float(self.duration_widge.text))
+        if self.delay_input.text == "0" and actually_move:
             root_robot.neutral()
+        time.sleep(float(self.delay_input.text))
 
 
 # ------------------------------------------------------------------------------
@@ -455,9 +466,10 @@ class WaistWidge(ActionWidge):
                 root_robot.turnWaistLeft()
             elif position == 1:
                 root_robot.turnWaistRight()
-        time.sleep(float(self.delay_input.text))
-        if float(self.delay_input.text) == 0 and actually_move:
+        time.sleep(float(self.duration_widge.text))
+        if self.delay_input.text == "0" and actually_move:
             root_robot.neutral()
+        time.sleep(float(self.delay_input.text))
 
 
 # ------------------------------------------------------------------------------

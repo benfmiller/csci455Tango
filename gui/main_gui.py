@@ -5,7 +5,7 @@ import time
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.config import Config
-from action_widgets import ActionWidge
+from action_widgets import ActionWidge, root_robot
 from kivy.core.window import Window
 
 Window.maximize()
@@ -24,15 +24,6 @@ Config.write()
 # 7. Talking, be able to type in what sentence you want to say and the robot says it.
 
 num_placeholders = 8
-categories = {
-    "drive": [],
-    "turn": [],
-    "head_tilt": [],
-    "head_turn": [],
-    "waist_turn": [],
-    "input": [],
-    "speak": [],
-}
 
 
 class ReturnButton(Button):
@@ -58,15 +49,14 @@ class ClearButton(Button):
 
 
 class ActivateButton(Button):
-    running = False
+    last_ran = time.time()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # self.bind(on_press=self.callback)
 
     def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos) and not self.running:
-            self.running = True
+        if self.collide_point(*touch.pos) and time.time() - self.last_ran > 1:
             print("\n********Activating setup********!")
             # time.sleep(0.05)
 
@@ -85,7 +75,25 @@ class ActivateButton(Button):
                 # button.background_normal = temp_background
                 num += 1
             print("********Activation Done********\n")
-            self.running = False
+
+            if root_robot is not None:
+                print("Neutralizing robot")
+                root_robot.neutral()
+                time.sleep(0.05)
+                root_robot.neutral()
+                time.sleep(0.05)
+                root_robot.neutral()
+                time.sleep(0.05)
+                root_robot.forward()
+                time.sleep(0.05)
+                root_robot.stop()
+                time.sleep(0.05)
+                root_robot.backward()
+                time.sleep(0.05)
+                root_robot.stop()
+                print("********Done Neutralizing********\n")
+            self.last_ran = time.time()
+
         return super().on_touch_down(touch)
 
 
