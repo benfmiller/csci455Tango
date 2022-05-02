@@ -2,7 +2,7 @@
 
 import random
 from in_out import Listener, Speaker
-from map_memory import Map, EasyEnemy, StrongEnemy, Enemy
+from map_memory import Map, EasyEnemy, StrongEnemy, Enemy, RechargingNode
 import time
 from threading import Thread
 from robot_handler import RobotHandler
@@ -19,6 +19,7 @@ from kivy.uix.screenmanager import ScreenManager
 
 starting_health = 100
 damage_range = [20, 40]
+max_moves = 30
 actually_speak = False
 actually_listen = False
 actually_move = False
@@ -39,6 +40,16 @@ class StartButton(Button):
             print("Starting Game!")
             app = App.get_running_app()
             app.root.current = "startScreen"  # type: ignore
+            Thread(target=app.start_game).start()  # type: ignore
+        return super().on_touch_down(touch)
+
+
+class ReturnToMainButton(Button):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            print("Moving to start screen")
+            app = App.get_running_app()
+            app.root.current = "mainScreen"  # type: ignore
             Thread(target=app.start_game).start()  # type: ignore
         return super().on_touch_down(touch)
 
@@ -66,16 +77,13 @@ class TangoGameApp(App):
         self.only_move = True
         self.move_number = 1
 
-    def perform_action(self):
-        ...
-
     def start_game(self):
         print("Running")
         while True:
             self.game_loop()
 
     def game_loop(self):
-        # TODO
+        # TODO: finish game loop
         # update gui
         # speak state and options to user
         # get input from user
@@ -88,13 +96,52 @@ class TangoGameApp(App):
         if "fight" in input_options:
             self.fight_mode()
         else:
-            ...
-        self.move_number += 1
+            self.move_mode(input_options)
+
         if self.health <= 0:
             self.speaker.output("We died. Game Over")
             app = App.get_running_app()
             app.root.current = "deathScreen"  # type: ignore
             self.robot_handler.death()
+        if self.move_number > max_moves:
+            self.speaker.output("You ran out of moves!")
+            self.speaker.output(f"Max moves is {max_moves}")
+            self.speaker.output("Game Over")
+            app = App.get_running_app()
+            app.root.current = "deathScreen"  # type: ignore
+            self.robot_handler.death()
+        else:
+            self.speaker.output(f"Move {self.move_number} out of {max_moves}")
+            time.sleep(0.1)
+        self.move_number += 1
+
+    def move_mode(self, input_options: list[str]):
+        current_node = self.game_map.current_node
+        app = App.get_running_app()
+        if isinstance(current_node, RechargingNode):
+            app.root.current = "rechargingScreen"  # type: ignore
+            self.speaker.output(f"Health recharged to {starting_health}")
+            time.sleep(0.1)
+            self.health = starting_health
+        else:
+            app.root.current = "movingScreen"  # type: ignore
+
+        input_string = ""
+        while True:
+            self.speaker.output(f"Please input a direction {' '.join(input_options)}")
+            input_string = self.listener.get_input()
+            selected_option = ""
+            for option in input_options:
+                if option in input_string:
+                    selected_option = option
+                    break
+            if selected_option != "":
+                break
+        self.move_direction(selected_option)
+
+    def move_direction(self, direction):
+        # TODO: implement move direction
+        ...
 
     def fight_mode(self):
         self.speaker.output("Fight!")
@@ -125,7 +172,6 @@ class TangoGameApp(App):
         app = App.get_running_app()
         app.root.current = "fightScreen"  # type: ignore
         self.robot_handler.fight()
-        # TODO: handle damage
         enemy_node: Enemy = self.game_map.current_node  # type: ignore
         damage_dealt = random.randint(damage_range[0], damage_range[1])
         enemy_node.health -= damage_dealt

@@ -25,10 +25,15 @@ class RobotHandler:
         # TODO: death movements
         print("making death motions")
 
-    def turn(self):
-        print(Direction)
-        print(Direction["Up"])
+    def turn_right(self):
+        # TODO: turn right 90 degrees
+        print("Turned right 90 degrees")
 
+    def turn_left(self):
+        # TODO: turn left 90 degrees
+        print("Turned left 90 degrees")
+
+    def turn(self):
         # if robot.turnRight():
         #     Direction["Front"] = "East"
         #     Direction["Left"] = "North"

@@ -56,7 +56,6 @@ class Map:
         ["x", " ", "x", " ", " "],
         [11, " ", 12, "x", 13],
     ]
-
     direction_map = {
         "front": "north",
         "left": "west",
@@ -66,8 +65,7 @@ class Map:
     direction: str
     position: list[int]
     current_node: Node
-    state: str  # in fight, moving, just started, all done
-    # 9 nodes
+    state: str  # in fight, moving, just started, all done NOTE: might not use
 
     def __init__(self) -> None:
         print("Initializing Map")
@@ -105,6 +103,7 @@ class Map:
         print("initialized randomized map")
         self.print_map()
         self.set_direction()
+        self.update_direction_map()
         print(f"facing {self.direction}")
 
     def set_direction(self):
@@ -118,56 +117,61 @@ class Map:
             possible_directions = ["north", "west"]
         self.direction = possible_directions[random.randint(0, 1)]
 
+    def update_right(self):
+        direction_list = ["north", "east", "south", "west"]
+        current_index = direction_list.index(self.direction)
+        self.direction = direction_list[(current_index + 1) % 4]
+        self.update_direction_map
+
+    def update_left(self):
+        direction_list = ["north", "east", "south", "west"]
+        current_index = direction_list.index(self.direction)
+        self.direction = direction_list[(current_index - 1) % 4]
+        self.update_direction_map
+
+    def update_direction_map(self):
+        direction_list = ["north", "east", "south", "west"]
+        current_index = direction_list.index(self.direction)
+        self.direction_map["front"] = direction_list[current_index]
+        self.direction_map["right"] = direction_list[(current_index + 1) % 4]
+        self.direction_map["behind"] = direction_list[(current_index + 2) % 4]
+        self.direction_map["left"] = direction_list[(current_index + 3) % 4]
+
+    def check_direction(self, direction) -> bool:
+        position_offset_map = {
+            "north": [-1, 0],
+            "east": [0, 1],
+            "south": [1, 0],
+            "west": [0, -1],
+        }
+        offset = position_offset_map[direction]
+        new_x = self.full_map[self.position[0] + offset[0]]
+        new_y = self.full_map[self.position[1] + offset[1]]
+        if (
+            new_x >= 0
+            and new_x < len(self.full_map)
+            and new_y >= 0
+            and new_y < len(self.full_map[0])
+            and self.full_map[new_x][new_y] == "x"
+        ):
+            return True
+        return False
+
     def get_input_options(self, only_move=False) -> list[str]:
-        Commands_list = [""]
+        # TODO: get get input options working
+        # current_node: Node = self.full_map[self.position[0]][self.position[1]]
 
-        # Commands_list = [
-        #     "north",
-        #     "south",
-        #     "east",
-        #     "west",
-        #     "fight",
-        #     "run",
-        # ]
-
-        # TODO check what current node is,
-        # TODO get directions we can go
-        # if current node is enemy, fight or run
-
-        current_node: Node = self.full_map[self.position[0]][self.position[1]]
-        try:
-            if isinstance(self.current_node, Enemy) and self.current_node.health > 0:
-                if isinstance(self.current_node, EasyEnemy):
-                    Commands_list.append("fight")
-                    Commands_list.append("run")
-                    # fight easy enemy
-                if isinstance(self.current_node, StrongEnemy):
-                    Commands_list.append("fight")
-                    Commands_list.append("run")
-                    # fight hard enemy
-                # call fight function or run function
-                else:
-                    print("current enemy defeated")
-            if self.full_map[self.position[0] + 1][self.position[1]] == "x":
-                Commands_list.append("east")
-
-                # right exists
-            if self.full_map[self.position[0] - 1][self.position[1]] == "x":
-                Commands_list.append("west")
-                # left exists
-
-            if self.full_map[self.position[0]][self.position[1] + 1] == "x":
-                Commands_list.append("north")
-                # above exists
-
-            if self.full_map[self.position[0]][self.position[1] - 1] == "x":
-                Commands_list.append("south")
-                # below exists
-
-        except IndexError:
-            print("Out of bounds")
-
-        return Commands_list
+        if (
+            isinstance(self.current_node, Enemy)
+            and self.current_node.health > 0
+            and not only_move
+        ):
+            return ["fight", "run"]
+        commands_list = [""]
+        for cardinal in ["north", "east", "south", "west"]:
+            if self.check_direction(cardinal):
+                commands_list.append(cardinal)
+        return commands_list
 
     def iterate_nonset(self):
         for x in range(len(self.full_map)):
