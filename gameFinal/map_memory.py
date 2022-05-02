@@ -1,61 +1,30 @@
-# NOTE: Use This as our map constructor file.
-# Handles randomness and classes and stuff
-# ----------------------------------
-# Level 1 Map
-L1 = [
-    [" ", " ", 1, " ", " "],
-    [" ", " ", "x", " ", " "],
-    [2, "x", 3, "x", 4],
-    [" ", " ", "x", " ", " "],
-    [" ", " ", 5, " ", " "],
-]
-print("Level 1 Map")
-for x in L1:
-    for y in x:
-        print(y, end=" ")
-    print()
+import random
+
+Direction = {"Front": "North", "Left": "West", "Right": "East", "Behind": "South"}
+
 # ----------------------------------
 # Level 2 Memory
-L2 = [
-    [1, "x", 2, "x", 3],
-    [" ", " ", "x", " ", "x"],
-    [6, "x", 7, " ", 8],
-    ["x", " ", "x", " ", " "],
-    [11, " ", 12, "x", 13],
-]
-print(" ")
-print("Level 2 Map")
-for x in L2:
-    for y in x:
-        print(y, end=" ")
-    print()
 # -----------------------------------
-# Level 3 Memory
-L3 = [
-    [1, "x", 2, "x", 3, " ", 4, "x", 5],
-    [" ", " ", "x", " ", "x", " ", " ", " ", "x"],
-    [6, "x", 7, " ", 8, " ", 9, "x", 10],
-    ["x", " ", "x", " ", " ", " ", "x", " ", "x"],
-    [11, " ", 12, "x", 13, "x", 14, " ", 15],
-    ["x", " ", " ", " ", " ", " ", "x", " ", "x"],
-    [16, "x", 17, " ", 18, " ", 19, "x", 20],
-    [" ", " ", "x", " ", "x", " ", "x", 24, 25],
-]
-print(" ")
-print("Level 3 Map")
-for x in L3:
-    for y in x:
-        print(y, end=" ")
-    print()
-
-
 class Map:
+    full_map = [
+        [1, "x", 2, "x", 3],
+        [" ", " ", "x", " ", "x"],
+        [6, "x", 7, " ", 8],
+        ["x", " ", "x", " ", " "],
+        [11, " ", 12, "x", 13],
+    ]
+
     position: list[int]
     state: str  # in fight, moving, just started, all done
     # 9 nodes
 
     def __init__(self) -> None:
         print("Initializing Map")
+        possible_corners = [[0, 0], [0, 4], [4, 0], [4, 4]]
+        starting_corner = random.randint(0, 3)
+        end_corner = random.randint(0, 2)
+        self.position = possible_corners.pop(starting_corner)
+
         # TODO: create map structure
         # TODO: Random start position in corner
         # TODO: Random ending in different corner
@@ -72,6 +41,53 @@ class Map:
 
     def perform_action(self):
         ...
+
+    def turn(self):
+        print(Direction)
+        print(Direction["Up"])
+
+        # if robot.turnRight():
+        #     Direction["Front"] = "East"
+        #     Direction["Left"] = "North"
+        #     Direction["Right"] = "South"
+        #     Direction["Behind"] = "West"
+
+        # if robot.turnLeft():
+        #     Direction["Front"] = "West"
+        #     Direction["Left"] = "South"
+        #     Direction["Right"] = "North"
+        #     Direction["Behind"] = "East"
+
+        # if robot.moveForward():
+        #     Direction["Front"] = "North"
+        #     Direction["Left"] = "West"
+        #     Direction["Right"] = "East"
+        #     Direction["Behind"] = "South"
+
+        # if robot.moveBackward():
+        #     Direction["Front"] = "South"
+        #     Direction["Left"] = "East"
+        #     Direction["Right"] = "West"
+        #     Direction["Behind"] = "North"
+
+    def print_map(self):
+        print(" ")
+        print("Level 2 Map")
+        for x in self.full_map:
+            for y in x:
+                print(y, end=" ")
+            print()
+
+
+class Node:
+    def __init__(self) -> None:
+        pass
+
+
+class EndNode(Node):
+    def __init__(self) -> None:
+        super().__init__()
+        self.unlocked = False
 
 
 class Enemy:

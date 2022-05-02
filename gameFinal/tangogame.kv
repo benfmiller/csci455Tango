@@ -1,0 +1,94 @@
+#:kivy 1.9.0
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+
+<ScreenManager>:
+    id: screenManager
+    transition: NoTransition()
+    Screen:
+        id: mainScreen
+        name: "mainScreen"
+        GridLayout:
+            cols: 4
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.2
+                Button:
+            BoxLayout:
+                id: middle
+                size_hint_x: 0.03
+            BoxLayout:
+                id:mainDrop
+                BoxLayout:
+                    orientation: 'vertical'
+                    BoxLayout:
+                        size_hint_y:0.4
+                        Label:
+                            text: ''
+                    BoxLayout:
+                        orientation: 'vertical'
+                        BoxLayout:
+                            size_hint_y: 0.45
+
+                        BoxLayout:
+                            size_hint_y: 0.4
+                            id: placeHolderLayout
+                        BoxLayout:
+                            size_hint_y: 0.45
+                    BoxLayout:
+                        size_hint_y:0.4
+                        Label:
+                            text: ''
+                        Label:
+                            text: ''
+                            size_hint_x:0.3
+            BoxLayout:
+                id: rightest
+                size_hint_x: 0.03
+    Screen:
+        # id: settingsScreen
+        name: "settingsScreen"
+        GridLayout:
+            cols: 3
+            BoxLayout:
+                size_hint_x: 0.1
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.8
+                BoxLayout:
+                    size_hint_y: 0.2
+                    Label:
+                        id: settingsTitleText
+                    Button:
+                        id: settingsTitleImage
+                        size_hint_x: 0.35
+                BoxLayout:
+                    id: settingsLayout
+                    size_hint_y: 0.6
+                    Button:
+                        text: "first button"
+                    Button:
+                        text: "second button"
+                Label:
+                    size_hint_y: 0.2
+                    text: ""
+            BoxLayout:
+                size_hint_x: 0.1
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        text: ""
+    Screen:
+        name: "activateScreen"
+        BoxLayout:
+            orientation: 'vertical'
+            BoxLayout:
+                id: activateWidgetLayout
+                size_hint_y: 0.3
+            BoxLayout:
+                BoxLayout:
+                    size_hint_x: 0.3
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_x: 0.3
+                    Label:
+                        text: ""
