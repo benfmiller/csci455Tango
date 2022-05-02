@@ -4,6 +4,7 @@ from in_out import Listener, Speaker
 from map_memory import Map
 import time
 from threading import Thread
+from robot_handler import RobotHandler
 
 from kivy.app import App
 from kivy.core.image import Image
@@ -29,6 +30,16 @@ Commands_list = [
 ]
 
 
+class StartButton(Button):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            print("Starting Game!")
+            app = App.get_running_app()
+            app.root.current = "startScreen"
+            Thread(target=app.start_game).start()
+        return super().on_touch_down(touch)
+
+
 class TangoGameApp(App):
     title = "Group 26 Tango"
 
@@ -40,16 +51,34 @@ class TangoGameApp(App):
         super().__init__()
         print("Initialized main gameRobot")
         self.game_map = Map()
-        # TODO: gui
+        self.robot_handler = RobotHandler(actually_move=actually_move)
+        self.speaker = Speaker(audio=actually_speak)
+        self.listener = Listener(audio=actually_listen)
 
     def perform_action(self):
         ...
+
         # TODO: probably check current game state
         # update gui
         # speak state and options to user
         # get input from user
         # perform action given input
         # Then return
+
+    def start_game(self):
+        print("Running")
+        while True:
+            self.game_loop()
+
+    def game_loop(self):
+        input_options = self.game_map.get_input_options()
+        if "fight" in input_options:
+            self.fight_mode()
+        else:
+            ...
+
+    def fight_mode(self):
+        ...
 
     def build(self):
         return MyScreenManager()

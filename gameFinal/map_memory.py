@@ -1,10 +1,54 @@
+from multiprocessing.dummy import current_process
 import random
 
-Direction = {"Front": "North", "Left": "West", "Right": "East", "Behind": "South"}
 
-# ----------------------------------
-# Level 2 Memory
-# -----------------------------------
+class Node:
+    number: int = 0
+
+    def __init__(self) -> None:
+        pass
+
+    def set_number(self, num):
+        self.number = num
+
+    def __str__(self) -> str:
+        return str(self.number)
+
+
+class EndNode(Node):
+    def __init__(self) -> None:
+        super().__init__()
+        self.unlocked = False
+
+
+class StartNode(Node):
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class RechargingNode(Node):
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class Enemy(Node):
+    health: float
+
+    def __init__(self) -> None:
+        pass
+
+
+class EasyEnemy(Enemy):
+    def __init__(self) -> None:
+        self.health = 50
+
+
+class StrongEnemy(Enemy):
+    def __init__(self, has_key=False) -> None:
+        self.has_key = has_key
+        self.health = 100
+
+
 class Map:
     full_map = [
         [1, "x", 2, "x", 3],
@@ -14,7 +58,15 @@ class Map:
         [11, " ", 12, "x", 13],
     ]
 
+    direction_map = {
+        "front": "north",
+        "left": "west",
+        "right": "east",
+        "behind": "south",
+    }
+    direction: str
     position: list[int]
+    current_node: Node
     state: str  # in fight, moving, just started, all done
     # 9 nodes
 
@@ -24,7 +76,8 @@ class Map:
         starting_corner = random.randint(0, 3)
         self.position = possible_corners.pop(starting_corner)
         node_num = self.full_map[self.position[0]][self.position[1]]
-        self.full_map[self.position[0]][self.position[1]] = StartNode()
+        self.current_node = StartNode()
+        self.full_map[self.position[0]][self.position[1]] = self.current_node
         self.full_map[self.position[0]][self.position[1]].set_number(node_num)
 
         end_corner = random.randint(0, 2)
@@ -49,44 +102,76 @@ class Map:
             node_num = self.full_map[next_node_position[0]][next_node_position[1]]
             self.full_map[next_node_position[0]][next_node_position[1]] = next_node
             next_node.set_number(node_num)
-            print(i)
 
         print("initialized randomized map")
         self.print_map()
+        self.set_direction()
+        print(f"facing {self.direction}")
 
-    def get_input_options(self):
-        ...
+    def set_direction(self):
+        if self.position == [0, 0]:
+            possible_directions = ["south", "east"]
+        elif self.position == [0, 4]:
+            possible_directions = ["south", "west"]
+        elif self.position == [4, 0]:
+            possible_directions = ["north", "east"]
+        else:  # bottom right
+            possible_directions = ["north", "west"]
+        self.direction = possible_directions[random.randint(0, 1)]
 
-    def perform_action(self):
-        ...
+    def get_input_options(self) -> list[str]:
 
-    def turn(self):
-        print(Direction)
-        print(Direction["Up"])
+        North = False
+        South = False
+        West = False
+        East = False
+        fight = False
+        run = False
 
-        # if robot.turnRight():
-        #     Direction["Front"] = "East"
-        #     Direction["Left"] = "North"
-        #     Direction["Right"] = "South"
-        #     Direction["Behind"] = "West"
+        # Commands_list = [
+        #     "north",
+        #     "south",
+        #     "east",
+        #     "west",
+        #     "fight",
+        #     "run",
+        # ]
 
-        # if robot.turnLeft():
-        #     Direction["Front"] = "West"
-        #     Direction["Left"] = "South"
-        #     Direction["Right"] = "North"
-        #     Direction["Behind"] = "East"
+        # TODO check what current node is,
+        # TODO get directions we can go
+        # if current node is enemy, fight or run
 
-        # if robot.moveForward():
-        #     Direction["Front"] = "North"
-        #     Direction["Left"] = "West"
-        #     Direction["Right"] = "East"
-        #     Direction["Behind"] = "South"
+        current_node: Node = self.full_map[self.position[0]][self.position[1]]
+        try:
+            if isinstance(self.current_node, Enemy) and self.current_node.health > 0:
+                if isinstance(self.current_node, EasyEnemy):
+                    pass
+                    # fight easy enemy
+                if isinstance(self.current_node, StrongEnemy):
+                    pass
+                    # fight hard enemy
+                # call fight function or run function
+                else:
+                    print("current enemy defeated")
+            if self.full_map[self.position[0] + 1][self.position[1]] == "x":
+                East = True
+                # return Commands_list
+            # right exists
+            if self.full_map[self.position[0] - 1][self.position[1]] == "x":
+                West = True
+                # left exists
 
-        # if robot.moveBackward():
-        #     Direction["Front"] = "South"
-        #     Direction["Left"] = "East"
-        #     Direction["Right"] = "West"
-        #     Direction["Behind"] = "North"
+            if self.full_map[self.position[0]][self.position[1] + 1] == "x":
+                North = True
+                # above exists
+
+            if self.full_map[self.position[0]][self.position[1] - 1] == "x":
+                South = True
+                # below exists
+
+        except IndexError:
+            print("Out of bounds")
+        print(current_node.number)
 
     def iterate_nonset(self):
         for x in range(len(self.full_map)):
@@ -102,43 +187,22 @@ class Map:
                 print(y, end=" ")
             print()
 
+    def attempt_run(self) -> True:
+        if random.random() < 0.75:
+            print("Run away successful")
+            self.run_away()
+            return True
+        else:
+            print("Run away unsuccessful")
+            return False
 
-class Node:
-    number: int = 0
-
-    def __init__(self) -> None:
-        pass
-
-    def set_number(self, num):
-        self.number = num
-
-
-class EndNode(Node):
-    def __init__(self) -> None:
-        super().__init__()
-        self.unlocked = False
-
-
-class StartNode(Node):
-    def __init__(self) -> None:
-        super().__init__()
-
-
-class RechargingNode(Node):
-    def __init__(self) -> None:
-        super().__init__()
-
-
-class Enemy(Node):
-    def __init__(self) -> None:
-        pass
-
-
-class EasyEnemy(Enemy):
-    def __init__(self) -> None:
-        pass
-
-
-class StrongEnemy(Enemy):
-    def __init__(self, has_key=False) -> None:
-        self.has_key = has_key
+    def run_away(self):
+        positions_index = []
+        for x in range(len(self.full_map)):
+            for y in range(len(self.full_map[1])):
+                if (
+                    not isinstance(self.full_map[x][y], str)
+                    and [x, y] != self.current_position
+                ):
+                    positions_index.append([x, y])
+        self.position = positions_index[random.randint(0, len(positions_index) - 1)]
