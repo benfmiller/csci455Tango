@@ -29,12 +29,15 @@ Commands_list = [
 ]
 
 
-class gameRobot:
+class TangoGameApp(App):
+    title = "Group 26 Tango"
+
     game_map: Map
     listener: Listener
     speaker: Speaker
 
     def __init__(self) -> None:
+        super().__init__()
         print("Initialized main gameRobot")
         self.game_map = Map()
         # TODO: gui
@@ -48,19 +51,12 @@ class gameRobot:
         # perform action given input
         # Then return
 
-    def run(self):
-        ...
+    def build(self):
+        return MyScreenManager()
 
 
 class MyScreenManager(ScreenManager):
     ...
-
-
-class TangoGameApp(App):
-    title = "Group 26 Tango"
-
-    def build(self):
-        return MyScreenManager()
 
 
 if __name__ == "__main__":

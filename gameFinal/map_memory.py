@@ -22,19 +22,37 @@ class Map:
         print("Initializing Map")
         possible_corners = [[0, 0], [0, 4], [4, 0], [4, 4]]
         starting_corner = random.randint(0, 3)
-        end_corner = random.randint(0, 2)
         self.position = possible_corners.pop(starting_corner)
+        node_num = self.full_map[self.position[0]][self.position[1]]
+        self.full_map[self.position[0]][self.position[1]] = StartNode()
+        self.full_map[self.position[0]][self.position[1]].set_number(node_num)
 
-        # TODO: create map structure
-        # TODO: Random start position in corner
-        # TODO: Random ending in different corner
+        end_corner = random.randint(0, 2)
+        end_position = possible_corners.pop(end_corner)
+        node_num = self.full_map[end_position[0]][end_position[1]]
+        self.full_map[end_position[0]][end_position[1]] = EndNode()
+        self.full_map[end_position[0]][end_position[1]].set_number(node_num)
 
-        # Node types
-        # Start
-        # End
-        # Recharging Station
-        # Four weak bad guys
-        # Two hard bad guys. (need to have all hit points to beat)
+        remaining_node_list = [
+            EasyEnemy(),
+            EasyEnemy(),
+            EasyEnemy(),
+            EasyEnemy(),
+            StrongEnemy(has_key=False),
+            StrongEnemy(has_key=True),
+            RechargingNode(),
+        ]
+        unset_gen = self.iterate_nonset()
+        for i in range(len(remaining_node_list) - 1, -1, -1):
+            next_node = remaining_node_list.pop(random.randint(0, i))
+            next_node_position = unset_gen.__next__()
+            node_num = self.full_map[next_node_position[0]][next_node_position[1]]
+            self.full_map[next_node_position[0]][next_node_position[1]] = next_node
+            next_node.set_number(node_num)
+            print(i)
+
+        print("initialized randomized map")
+        self.print_map()
 
     def get_input_options(self):
         ...
@@ -70,6 +88,12 @@ class Map:
         #     Direction["Right"] = "West"
         #     Direction["Behind"] = "North"
 
+    def iterate_nonset(self):
+        for x in range(len(self.full_map)):
+            for y in range(len(self.full_map[1])):
+                if isinstance(self.full_map[x][y], int):
+                    yield [x, y]
+
     def print_map(self):
         print(" ")
         print("Level 2 Map")
@@ -80,8 +104,13 @@ class Map:
 
 
 class Node:
+    number: int = 0
+
     def __init__(self) -> None:
         pass
+
+    def set_number(self, num):
+        self.number = num
 
 
 class EndNode(Node):
@@ -90,16 +119,26 @@ class EndNode(Node):
         self.unlocked = False
 
 
-class Enemy:
+class StartNode(Node):
     def __init__(self) -> None:
-        print("Initialized a Base enemy")
+        super().__init__()
+
+
+class RechargingNode(Node):
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class Enemy(Node):
+    def __init__(self) -> None:
+        pass
 
 
 class EasyEnemy(Enemy):
     def __init__(self) -> None:
-        print("Initialized an easy enemy")
+        pass
 
 
 class StrongEnemy(Enemy):
-    def __init__(self) -> None:
-        print("Initialized a strong enemy")
+    def __init__(self, has_key=False) -> None:
+        self.has_key = has_key
