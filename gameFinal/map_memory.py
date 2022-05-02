@@ -1,4 +1,3 @@
-from multiprocessing.dummy import current_process
 import random
 
 
@@ -119,14 +118,8 @@ class Map:
             possible_directions = ["north", "west"]
         self.direction = possible_directions[random.randint(0, 1)]
 
-    def get_input_options(self) -> list[str]:
-
-        North = False
-        South = False
-        West = False
-        East = False
-        fight = False
-        run = False
+    def get_input_options(self, only_move=False) -> list[str]:
+        Commands_list = [""]
 
         # Commands_list = [
         #     "north",
@@ -145,33 +138,36 @@ class Map:
         try:
             if isinstance(self.current_node, Enemy) and self.current_node.health > 0:
                 if isinstance(self.current_node, EasyEnemy):
-                    pass
+                    Commands_list.append("fight")
+                    Commands_list.append("run")
                     # fight easy enemy
                 if isinstance(self.current_node, StrongEnemy):
-                    pass
+                    Commands_list.append("fight")
+                    Commands_list.append("run")
                     # fight hard enemy
                 # call fight function or run function
                 else:
                     print("current enemy defeated")
             if self.full_map[self.position[0] + 1][self.position[1]] == "x":
-                East = True
-                # return Commands_list
-            # right exists
+                Commands_list.append("east")
+
+                # right exists
             if self.full_map[self.position[0] - 1][self.position[1]] == "x":
-                West = True
+                Commands_list.append("west")
                 # left exists
 
             if self.full_map[self.position[0]][self.position[1] + 1] == "x":
-                North = True
+                Commands_list.append("north")
                 # above exists
 
             if self.full_map[self.position[0]][self.position[1] - 1] == "x":
-                South = True
+                Commands_list.append("south")
                 # below exists
 
         except IndexError:
             print("Out of bounds")
-        print(current_node.number)
+
+        return Commands_list
 
     def iterate_nonset(self):
         for x in range(len(self.full_map)):
@@ -187,7 +183,7 @@ class Map:
                 print(y, end=" ")
             print()
 
-    def attempt_run(self) -> True:
+    def attempt_run(self) -> bool:
         if random.random() < 0.75:
             print("Run away successful")
             self.run_away()
@@ -200,9 +196,7 @@ class Map:
         positions_index = []
         for x in range(len(self.full_map)):
             for y in range(len(self.full_map[1])):
-                if (
-                    not isinstance(self.full_map[x][y], str)
-                    and [x, y] != self.current_position
-                ):
+                if not isinstance(self.full_map[x][y], str) and [x, y] != self.position:
                     positions_index.append([x, y])
         self.position = positions_index[random.randint(0, len(positions_index) - 1)]
+        self.current_node = self.full_map[self.position[0]][self.position[1]]

@@ -1,7 +1,6 @@
 import time
 
 
-
 class RobotHandler:
     def __init__(self, actually_move=False) -> None:
         if actually_move:
@@ -16,6 +15,15 @@ class RobotHandler:
             root_robot.neutral()
         else:
             root_robot = None
+
+    def fight(self):
+        # TODO: fight animation
+        print("Making fight motions")
+        ...
+
+    def death(self):
+        # TODO: death movements
+        print("making death motions")
 
     def turn(self):
         print(Direction)
