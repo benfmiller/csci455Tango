@@ -148,6 +148,8 @@ class TangoGameApp(App):
         if isinstance(current_node, RechargingNode):
             app.root.ids.mainButton.text = "Recharging"  # type: ignore
             self.speaker.output(f"Health recharged to {starting_health}")
+            self.robot_handler.recharging()
+            self.speaker.output(f"Done recharching")
             self.health = starting_health
             app.root.ids.health.text = f"Health: {self.health}"  # type: ignore
             time.sleep(0.1)

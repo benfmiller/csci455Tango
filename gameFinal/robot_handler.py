@@ -17,17 +17,87 @@ class RobotHandler:
             self.root_robot = None
 
     def fight(self):
-        # TODO: fight animation
         print("Making fight motions")
-        ...
+        if self.root_robot is not None:
+            shoulder = 5
+            self.root_robot.run(5500, shoulder, 0)
+            time.sleep(0.4)
+            self.root_robot.run(8000, shoulder, 0)
+            time.sleep(0.4)
+            self.root_robot.turnWaistLeft()
+            time.sleep(0.3)
+            self.root_robot.turnHeadLeft()
+            time.sleep(0.3)
+            self.root_robot.turnHeadLeft()
+            time.sleep(0.3)
+            self.root_robot.turnWaistRight()
+            time.sleep(0.3)
+            self.root_robot.turnHeadRight()
+            time.sleep(0.3)
+            self.root_robot.turnHeadRight()
+            time.sleep(0.3)
+            self.root_robot.turnHeadRight()
+            shoulder = 5
+            self.root_robot.run(5500, shoulder, 0)
+            time.sleep(0.4)
+            self.root_robot.run(8000, shoulder, 0)
+            time.sleep(0.8)
+            self.root_robot.run(7000, shoulder, 0)
+            time.sleep(0.4)
+            self.root_robot.run(6000, shoulder, 0)
 
     def death(self):
-        # TODO: death movements
         print("making death motions")
+        if self.root_robot is not None:
+            for i in range(3):
+                self.root_robot.turnHeadLeft()
+                time.sleep(0.2)
+                self.root_robot.turnHeadRight()
+                time.sleep(0.2)
+                self.root_robot.turnHeadRight()
+                time.sleep(0.2)
+                self.root_robot.turnHeadLeft()
+                time.sleep(0.2)
+
+    def recharging(self):
+        print("Making recharging movements")
+        if self.root_robot is not None:
+            self.root_robot.tiltHeadUp()
+            time.sleep(0.2)
+            self.root_robot.tiltHeadUp()
+            time.sleep(2)
+            self.root_robot.tiltHeadDown()
+            time.sleep(0.2)
+            self.root_robot.tiltHeadDown()
 
     def win(self):
-        # TODO: win movements
-        ...
+        if self.root_robot is not None:
+            for i in range(2):
+                self.root_robot.tiltHeadUp()
+                time.sleep(0.2)
+                self.root_robot.tiltHeadDown()
+                time.sleep(0.2)
+                self.root_robot.tiltHeadDown()
+                time.sleep(0.2)
+                self.root_robot.tiltHeadUp()
+                time.sleep(0.2)
+            elbow = 7
+            self.root_robot.run(5500, elbow, 0)
+            time.sleep(0.4)
+            self.root_robot.run(3000, elbow, 0)
+            time.sleep(0.8)
+            self.root_robot.run(4000, elbow, 0)
+            time.sleep(0.4)
+            self.root_robot.run(5500, elbow, 0)
+            for i in range(2):
+                self.root_robot.tiltHeadUp()
+                time.sleep(0.2)
+                self.root_robot.tiltHeadDown()
+                time.sleep(0.2)
+                self.root_robot.tiltHeadDown()
+                time.sleep(0.2)
+                self.root_robot.tiltHeadUp()
+                time.sleep(0.2)
 
     def turn_right(self):
         print("Turned right 90 degrees")
@@ -56,7 +126,6 @@ class RobotHandler:
         time.sleep(0.1)
 
     def stop(self):
-        # TODO: stop
         if self.root_robot is not None:
             self.root_robot.forward()
             time.sleep(0.05)
@@ -110,7 +179,6 @@ class RobotHandler:
 
 
 if __name__ == "__main__":
-    my_robot = RobotHandler()
+    my_robot = RobotHandler(True)
     print("robot started")
-    my_robot.fight()
-    my_robot
+    my_robot.win()
