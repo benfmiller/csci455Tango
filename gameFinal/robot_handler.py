@@ -33,6 +33,18 @@ class RobotHandler:
         # TODO: turn left 90 degrees
         print("Turned left 90 degrees")
 
+    def stop(self):
+        # TODO: stop
+        ...
+
+    def big_stop(self):
+        # TODO: Big stop, do all the writes to make sure it moves properly
+        ...
+
+    def forward(self):
+        # TODO: robot move forward one tile
+        ...
+
     # def turn(self):
 
     # if robot.turnRight():

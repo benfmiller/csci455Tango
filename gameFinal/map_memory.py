@@ -52,9 +52,9 @@ class Map:
     full_map = [
         [1, "x", 2, "x", 3],
         [" ", " ", "x", " ", "x"],
-        [6, "x", 7, " ", 8],
+        [4, "x", 5, " ", 6],
         ["x", " ", "x", " ", " "],
-        [11, " ", 12, "x", 13],
+        [7, " ", 8, "x", 9],
     ]
     direction_map = {
         "front": "north",
@@ -158,9 +158,6 @@ class Map:
         return False
 
     def get_input_options(self, only_move=False) -> list[str]:
-        # TODO: get get input options working
-        # current_node: Node = self.full_map[self.position[0]][self.position[1]]
-
         if (
             isinstance(self.current_node, Enemy)
             and self.current_node.health > 0
@@ -203,4 +200,26 @@ class Map:
                 if not isinstance(self.full_map[x][y], str) and [x, y] != self.position:
                     positions_index.append([x, y])
         self.position = positions_index[random.randint(0, len(positions_index) - 1)]
+        self.current_node = self.full_map[self.position[0]][self.position[1]]
+
+    def get_change_direction(self, direction) -> int:
+        if self.direction_map["front"] == direction:
+            return 0
+        elif self.direction_map["left"] == direction:
+            return -1
+        elif self.direction_map["right"] == direction:
+            return 1
+        else:
+            return 2
+
+    def update_move_forward(self):
+        # TODO: update status for move forward
+        if self.direction == "north":
+            self.position[0] -= 2
+        elif self.direction == "south":
+            self.position[0] += 2
+        elif self.direction == "east":
+            self.position[1] += 2
+        else:  # west
+            self.position[1] -= 2
         self.current_node = self.full_map[self.position[0]][self.position[1]]

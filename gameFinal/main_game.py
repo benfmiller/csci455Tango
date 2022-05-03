@@ -126,7 +126,9 @@ class TangoGameApp(App):
         else:
             app.root.ids.mainButton.text = "Moving"  # type: ignore
 
-        self.speaker.output(f"You are at node {current_node.number}")
+        self.speaker.output(
+            f"You are at node {current_node.number} facing {self.game_map.direction}"
+        )
         input_string = ""
         while True:
             self.speaker.output(f"Please input a direction {' '.join(input_options)}")
@@ -142,9 +144,27 @@ class TangoGameApp(App):
         self.move_direction(selected_option)
 
     def move_direction(self, direction):
-        # TODO: implement move direction
-
-        ...
+        print("Turning")
+        position = self.game_map.get_change_direction(direction)
+        while position > 0:
+            print("Turning right")
+            self.game_map.update_right()
+            if actually_move:
+                self.robot_handler.turn_right()
+            time.sleep(0.1)
+            position -= 1
+        while position < 0:
+            print("Turning left")
+            self.game_map.update_left()
+            if actually_move:
+                self.robot_handler.turn_left()
+            time.sleep(0.1)
+            position += 1
+        print("Moving forward")
+        self.game_map.update_move_forward()
+        if actually_move:
+            self.robot_handler.stop()
+            self.robot_handler.forward()
 
     def fight_mode(self):
         self.speaker.output("Fight!")
