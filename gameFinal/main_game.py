@@ -39,7 +39,7 @@ class StartButton(Button):
         if self.collide_point(*touch.pos):
             print("Starting Game!")
             app = App.get_running_app()
-            app.root.current = "startScreen"  # type: ignore
+            app.root.current = "gameScreen"  # type: ignore
             Thread(target=app.start_game).start()  # type: ignore
         return super().on_touch_down(touch)
 
@@ -101,14 +101,14 @@ class TangoGameApp(App):
         if self.health <= 0:
             self.speaker.output("We died. Game Over")
             app = App.get_running_app()
-            app.root.current = "deathScreen"  # type: ignore
+            app.root.ids.mainButton.text = "Dead"  # type: ignore
             self.robot_handler.death()
         if self.move_number > max_moves:
             self.speaker.output("You ran out of moves!")
             self.speaker.output(f"Max moves is {max_moves}")
             self.speaker.output("Game Over")
             app = App.get_running_app()
-            app.root.current = "deathScreen"  # type: ignore
+            app.root.ids.mainButton.text = "Dead"  # type: ignore
             self.robot_handler.death()
         else:
             self.speaker.output(f"Move {self.move_number} out of {max_moves}")
@@ -119,17 +119,19 @@ class TangoGameApp(App):
         current_node = self.game_map.current_node
         app = App.get_running_app()
         if isinstance(current_node, RechargingNode):
-            app.root.current = "rechargingScreen"  # type: ignore
+            app.root.ids.mainButton.text = "Recharging"  # type: ignore
             self.speaker.output(f"Health recharged to {starting_health}")
             time.sleep(0.1)
             self.health = starting_health
         else:
-            app.root.current = "movingScreen"  # type: ignore
+            app.root.ids.mainButton.text = "Moving"  # type: ignore
 
+        self.speaker.output(f"You are at node {current_node.number}")
         input_string = ""
         while True:
             self.speaker.output(f"Please input a direction {' '.join(input_options)}")
             input_string = self.listener.get_input()
+            print(f"input is '{input_string}'")
             selected_option = ""
             for option in input_options:
                 if option in input_string:
@@ -141,6 +143,7 @@ class TangoGameApp(App):
 
     def move_direction(self, direction):
         # TODO: implement move direction
+
         ...
 
     def fight_mode(self):
@@ -148,11 +151,11 @@ class TangoGameApp(App):
         time.sleep(0.1)
         if isinstance(self.game_map.current_node, EasyEnemy):
             app = App.get_running_app()
-            app.root.current = "easyEnemyScreen"  # type: ignore
+            app.root.ids.mainButton.text = "Easy Enemy"  # type: ignore
             enemy_string = f"The enemy is weak. {int(self.game_map.current_node.health)} health points left"
         else:
             app = App.get_running_app()
-            app.root.current = "strongEnemyScreen"  # type: ignore
+            app.root.ids.mainButton.text = "Strong Enemy"  # type: ignore
             enemy_string = f"The enemy is strong. {int(self.game_map.current_node.health)} health points left"  # type: ignore
         self.speaker.output(f"We have {int(self.health)} health points left")
         time.sleep(0.1)

@@ -33,27 +33,28 @@ class RobotHandler:
         # TODO: turn left 90 degrees
         print("Turned left 90 degrees")
 
-    def turn(self):
-        # if robot.turnRight():
-        #     Direction["Front"] = "East"
-        #     Direction["Left"] = "North"
-        #     Direction["Right"] = "South"
-        #     Direction["Behind"] = "West"
+    # def turn(self):
 
-        # if robot.turnLeft():
-        #     Direction["Front"] = "West"
-        #     Direction["Left"] = "South"
-        #     Direction["Right"] = "North"
-        #     Direction["Behind"] = "East"
+    # if robot.turnRight():
+    #     Direction["Front"] = "East"
+    #     Direction["Left"] = "North"
+    #     Direction["Right"] = "South"
+    #     Direction["Behind"] = "West"
 
-        # if robot.moveForward():
-        #     Direction["Front"] = "North"
-        #     Direction["Left"] = "West"
-        #     Direction["Right"] = "East"
-        #     Direction["Behind"] = "South"
+    # if robot.turnLeft():
+    #     Direction["Front"] = "West"
+    #     Direction["Left"] = "South"
+    #     Direction["Right"] = "North"
+    #     Direction["Behind"] = "East"
 
-        # if robot.moveBackward():
-        #     Direction["Front"] = "South"
-        #     Direction["Left"] = "East"
-        #     Direction["Right"] = "West"
-        #     Direction["Behind"] = "North"
+    # if robot.moveForward():
+    #     Direction["Front"] = "North"
+    #     Direction["Left"] = "West"
+    #     Direction["Right"] = "East"
+    #     Direction["Behind"] = "South"
+
+    # if robot.moveBackward():
+    #     Direction["Front"] = "South"
+    #     Direction["Left"] = "East"
+    #     Direction["Right"] = "West"
+    #     Direction["Behind"] = "North"

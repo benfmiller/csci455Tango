@@ -145,8 +145,8 @@ class Map:
             "west": [0, -1],
         }
         offset = position_offset_map[direction]
-        new_x = self.full_map[self.position[0] + offset[0]]
-        new_y = self.full_map[self.position[1] + offset[1]]
+        new_x = self.position[0] + offset[0]
+        new_y = self.position[1] + offset[1]
         if (
             new_x >= 0
             and new_x < len(self.full_map)
@@ -167,7 +167,7 @@ class Map:
             and not only_move
         ):
             return ["fight", "run"]
-        commands_list = [""]
+        commands_list = []
         for cardinal in ["north", "east", "south", "west"]:
             if self.check_direction(cardinal):
                 commands_list.append(cardinal)
