@@ -241,7 +241,6 @@ class TangoGameApp(App):
         self.health -= damage_took
         self.speaker.output(f"Took {damage_took} damage.")
         time.sleep(0.1)
-        self.speaker.output(f"New health is {self.health}.")
 
     def perform_run(self):
         self.speaker.output("Run!")
@@ -259,7 +258,6 @@ class TangoGameApp(App):
             self.health -= damage_took
             self.speaker.output(f"Took {damage_took} damage.")
             time.sleep(0.1)
-            self.speaker.output(f"New health is {self.health}.")
 
     def build(self):
         return MyScreenManager()

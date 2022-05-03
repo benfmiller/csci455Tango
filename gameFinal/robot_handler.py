@@ -45,6 +45,7 @@ class RobotHandler:
             self.root_robot.run(7000, shoulder, 0)
             time.sleep(0.4)
             self.root_robot.run(6000, shoulder, 0)
+            self.neutral()
 
     def death(self):
         print("making death motions")
@@ -58,6 +59,7 @@ class RobotHandler:
                 time.sleep(0.2)
                 self.root_robot.turnHeadLeft()
                 time.sleep(0.2)
+            self.neutral()
 
     def recharging(self):
         print("Making recharging movements")
@@ -69,6 +71,7 @@ class RobotHandler:
             self.root_robot.tiltHeadDown()
             time.sleep(0.2)
             self.root_robot.tiltHeadDown()
+            self.neutral()
 
     def win(self):
         if self.root_robot is not None:
@@ -98,29 +101,32 @@ class RobotHandler:
                 time.sleep(0.2)
                 self.root_robot.tiltHeadUp()
                 time.sleep(0.2)
+            self.neutral()
 
     def turn_right(self):
+        self.stop()
         print("Turned right 90 degrees")
-        if self.root_robot is not None:
-            position = 3
-            while position > 0:
-                self.root_robot.turnLeft()
-                time.sleep(0.05)
-                position -= 1
-        time.sleep(1)
-        if self.root_robot is not None:
-            self.root_robot.stop()
-        time.sleep(0.1)
-
-    def turn_left(self):
-        print("Turned left 90 degrees")
         if self.root_robot is not None:
             position = 3
             while position > 0:
                 self.root_robot.turnRight()
                 time.sleep(0.05)
                 position -= 1
-        time.sleep(1)
+        time.sleep(0.6)
+        if self.root_robot is not None:
+            self.root_robot.stop()
+        time.sleep(0.1)
+
+    def turn_left(self):
+        self.stop()
+        print("Turned left 90 degrees")
+        if self.root_robot is not None:
+            position = 3
+            while position > 0:
+                self.root_robot.turnLeft()
+                time.sleep(0.05)
+                position -= 1
+        time.sleep(0.6)
         if self.root_robot is not None:
             self.root_robot.stop()
         time.sleep(0.1)
