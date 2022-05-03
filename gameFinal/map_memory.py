@@ -223,3 +223,4 @@ class Map:
         else:  # west
             self.position[1] -= 2
         self.current_node = self.full_map[self.position[0]][self.position[1]]
+        print(self.current_node.__class__)

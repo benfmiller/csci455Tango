@@ -45,6 +45,10 @@ class RobotHandler:
         # TODO: robot move forward one tile
         ...
 
+    def win(self):
+        # TODO: win movements
+        ...
+
     # def turn(self):
 
     # if robot.turnRight():

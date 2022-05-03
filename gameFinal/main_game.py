@@ -2,7 +2,7 @@
 
 import random
 from in_out import Listener, Speaker
-from map_memory import Map, EasyEnemy, StrongEnemy, Enemy, RechargingNode
+from map_memory import Map, EasyEnemy, StrongEnemy, Enemy, RechargingNode, EndNode
 import time
 from threading import Thread
 from robot_handler import RobotHandler
@@ -93,10 +93,21 @@ class TangoGameApp(App):
             input_options = self.game_map.get_input_options(only_move=True)
         else:
             input_options = self.game_map.get_input_options(only_move=False)
+
+        if isinstance(self.game_map.current_node, EndNode):
+            if self.has_key:
+                self.speaker.output("Win! We have the key, so we win")
+                app.root.ids.mainButton.text = "Win!"  # type: ignore
+                self.robot_handler.win()
+            else:
+                self.speaker.output("At the End, but we need the key!")
+
         if "fight" in input_options:
             self.fight_mode()
         else:
             self.move_mode(input_options)
+
+        # TODO: movement isn't working quite right
 
         if self.health <= 0:
             self.speaker.output("We died. Game Over")
@@ -149,22 +160,20 @@ class TangoGameApp(App):
         while position > 0:
             print("Turning right")
             self.game_map.update_right()
-            if actually_move:
-                self.robot_handler.turn_right()
+            self.robot_handler.turn_right()
             time.sleep(0.1)
             position -= 1
         while position < 0:
             print("Turning left")
             self.game_map.update_left()
-            if actually_move:
-                self.robot_handler.turn_left()
+            self.robot_handler.turn_left()
             time.sleep(0.1)
             position += 1
         print("Moving forward")
         self.game_map.update_move_forward()
-        if actually_move:
-            self.robot_handler.stop()
-            self.robot_handler.forward()
+        self.only_move = False
+        self.robot_handler.stop()
+        self.robot_handler.forward()
 
     def fight_mode(self):
         self.speaker.output("Fight!")
@@ -193,7 +202,7 @@ class TangoGameApp(App):
     def perform_fight(self):
         self.speaker.output("Fight!")
         app = App.get_running_app()
-        app.root.current = "fightScreen"  # type: ignore
+        app.root.ids.mainButton.text = "Smack!"  # type: ignore
         self.robot_handler.fight()
         enemy_node: Enemy = self.game_map.current_node  # type: ignore
         damage_dealt = random.randint(damage_range[0], damage_range[1])
@@ -217,7 +226,7 @@ class TangoGameApp(App):
         self.speaker.output("Run!")
         if self.game_map.attempt_run():
             app = App.get_running_app()
-            app.root.current = "runScreen"  # type: ignore
+            app.root.ids.mainButton.text = "Run!"  # type: ignore
             self.speaker.output("We successfully escaped")
             self.speaker.output(
                 f"New position is node {self.game_map.current_node.number}"
