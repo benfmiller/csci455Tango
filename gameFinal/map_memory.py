@@ -65,7 +65,6 @@ class Map:
     direction: str
     position: list[int]
     current_node: Node
-    state: str  # in fight, moving, just started, all done NOTE: might not use
 
     def __init__(self) -> None:
         print("Initializing Map")
@@ -121,13 +120,13 @@ class Map:
         direction_list = ["north", "east", "south", "west"]
         current_index = direction_list.index(self.direction)
         self.direction = direction_list[(current_index + 1) % 4]
-        self.update_direction_map
+        self.update_direction_map()
 
     def update_left(self):
         direction_list = ["north", "east", "south", "west"]
         current_index = direction_list.index(self.direction)
         self.direction = direction_list[(current_index - 1) % 4]
-        self.update_direction_map
+        self.update_direction_map()
 
     def update_direction_map(self):
         direction_list = ["north", "east", "south", "west"]
@@ -213,7 +212,6 @@ class Map:
             return 2
 
     def update_move_forward(self):
-        # TODO: update status for move forward
         if self.direction == "north":
             self.position[0] -= 2
         elif self.direction == "south":

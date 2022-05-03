@@ -80,15 +80,12 @@ class TangoGameApp(App):
     def start_game(self):
         print("Running")
         while True:
-            self.game_loop()
+            if not self.game_loop():
+                break
 
-    def game_loop(self):
+    def game_loop(self) -> bool:
         # TODO: finish game loop
         # update gui
-        # speak state and options to user
-        # get input from user
-        # perform action given input
-        # Then return
         if self.only_move:
             input_options = self.game_map.get_input_options(only_move=True)
         else:
@@ -97,8 +94,10 @@ class TangoGameApp(App):
         if isinstance(self.game_map.current_node, EndNode):
             if self.has_key:
                 self.speaker.output("Win! We have the key, so we win")
+                app = App.get_running_app()
                 app.root.ids.mainButton.text = "Win!"  # type: ignore
                 self.robot_handler.win()
+                return False
             else:
                 self.speaker.output("At the End, but we need the key!")
 
@@ -106,8 +105,6 @@ class TangoGameApp(App):
             self.fight_mode()
         else:
             self.move_mode(input_options)
-
-        # TODO: movement isn't working quite right
 
         if self.health <= 0:
             self.speaker.output("We died. Game Over")
@@ -125,6 +122,7 @@ class TangoGameApp(App):
             self.speaker.output(f"Move {self.move_number} out of {max_moves}")
             time.sleep(0.1)
         self.move_number += 1
+        return True
 
     def move_mode(self, input_options: list[str]):
         current_node = self.game_map.current_node
@@ -157,6 +155,7 @@ class TangoGameApp(App):
     def move_direction(self, direction):
         print("Turning")
         position = self.game_map.get_change_direction(direction)
+        print(f"Position to turn is {position}")
         while position > 0:
             print("Turning right")
             self.game_map.update_right()
