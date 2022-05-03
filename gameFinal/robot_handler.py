@@ -32,12 +32,12 @@ class RobotHandler:
     def turn_right(self):
         print("Turned right 90 degrees")
         if self.root_robot is not None:
-            position = 2
+            position = 3
             while position > 0:
                 self.root_robot.turnLeft()
                 time.sleep(0.05)
                 position -= 1
-        time.sleep(2)
+        time.sleep(1)
         if self.root_robot is not None:
             self.root_robot.stop()
         time.sleep(0.1)
@@ -45,35 +45,37 @@ class RobotHandler:
     def turn_left(self):
         print("Turned left 90 degrees")
         if self.root_robot is not None:
-            position = 2
+            position = 3
             while position > 0:
                 self.root_robot.turnRight()
                 time.sleep(0.05)
                 position -= 1
-        time.sleep(2)
+        time.sleep(1)
         if self.root_robot is not None:
             self.root_robot.stop()
         time.sleep(0.1)
 
     def stop(self):
         # TODO: stop
-        self.root_robot.forward()
-        time.sleep(0.05)
-        self.root_robot.stop()
+        if self.root_robot is not None:
+            self.root_robot.forward()
+            time.sleep(0.05)
+            self.root_robot.stop()
         print("regular stop")
 
     def big_stop(self):
-        self.root_robot.forward()
-        time.sleep(0.05)
-        self.root_robot.stop()
-        time.sleep(0.05)
-        self.root_robot.backward()
-        time.sleep(0.05)
-        self.root_robot.stop()
-        time.sleep(0.05)
-        self.root_robot.turnLeft()
-        time.sleep(0.05)
-        self.root_robot.stop()
+        if self.root_robot is not None:
+            self.root_robot.forward()
+            time.sleep(0.05)
+            self.root_robot.stop()
+            time.sleep(0.05)
+            self.root_robot.backward()
+            time.sleep(0.05)
+            self.root_robot.stop()
+            time.sleep(0.05)
+            self.root_robot.turnLeft()
+            time.sleep(0.05)
+            self.root_robot.stop()
         print("Big stopped")
 
     def forward(self):
@@ -87,22 +89,23 @@ class RobotHandler:
         time.sleep(1)
         if self.root_robot is not None:
             self.root_robot.stop()
-        time.sleep(float(self.delay_input.text))
+        time.sleep(0.1)
 
     def neutral(self):
-        self.root_robot.neutral()
-        time.sleep(0.05)
-        self.root_robot.neutral()
-        time.sleep(0.05)
-        self.root_robot.neutral()
-        time.sleep(0.05)
-        self.root_robot.forward()
-        time.sleep(0.05)
-        self.root_robot.stop()
-        time.sleep(0.05)
-        self.root_robot.backward()
-        time.sleep(0.05)
-        self.root_robot.stop()
+        if self.root_robot is not None:
+            self.root_robot.neutral()
+            time.sleep(0.05)
+            self.root_robot.neutral()
+            time.sleep(0.05)
+            self.root_robot.neutral()
+            time.sleep(0.05)
+            self.root_robot.forward()
+            time.sleep(0.05)
+            self.root_robot.stop()
+            time.sleep(0.05)
+            self.root_robot.backward()
+            time.sleep(0.05)
+            self.root_robot.stop()
         print("neutralized")
 
 

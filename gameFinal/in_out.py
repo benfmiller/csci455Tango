@@ -50,10 +50,10 @@ class Speaker:  # output
             voices = self.engine.getProperty("voices")
             # i corresponds with the voice type
             # we'll need to figure out which voice to use and the rate
-            i = 10
+            i = 11
             self.engine.setProperty("voice", voices[i].id)
             print(f'Using voice: {self.engine.getProperty("voice")}')
-            self.engine.setProperty("rate", 150)
+            self.engine.setProperty("rate", 200)
         else:
             self.using_console = True
 

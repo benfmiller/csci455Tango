@@ -19,22 +19,12 @@ from kivy.uix.screenmanager import ScreenManager
 starting_health = 100
 damage_range = [20, 40]
 max_moves = 40
-actually_speak = False
-actually_listen = False
-actually_move = False
+actually_speak = True
+actually_listen = True
+actually_move = True
 
 if actually_move is not None:
     Window.maximize()  # type: ignore
-
-
-Commands_list = [
-    "north",
-    "south",
-    "east",
-    "west",
-    "fight",
-    "run",
-]
 
 
 class StartButton(Button):
@@ -205,7 +195,7 @@ class TangoGameApp(App):
         self.robot_handler.forward()
 
     def fight_mode(self):
-        self.speaker.output("Fight!")
+        self.speaker.output("Enemy!")
         time.sleep(0.1)
         if isinstance(self.game_map.current_node, EasyEnemy):
             app = App.get_running_app()
