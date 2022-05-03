@@ -10,7 +10,6 @@ from robot_handler import RobotHandler
 from kivy.app import App
 from kivy.core.image import Image
 from kivy.uix.button import Button
-from kivy.config import Config
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty
@@ -23,6 +22,10 @@ max_moves = 40
 actually_speak = False
 actually_listen = False
 actually_move = False
+
+if actually_move is not None:
+    Window.maximize()  # type: ignore
+
 
 Commands_list = [
     "north",
@@ -197,7 +200,8 @@ class TangoGameApp(App):
         print("Moving forward")
         self.game_map.update_move_forward()
         self.only_move = False
-        self.robot_handler.stop()
+        # NOTE: might need this
+        # self.robot_handler.stop()
         self.robot_handler.forward()
 
     def fight_mode(self):
