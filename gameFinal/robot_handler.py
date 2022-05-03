@@ -53,28 +53,9 @@ class RobotHandler:
         # TODO: nice neutral state
         ...
 
-    # def turn(self):
 
-    # if robot.turnRight():
-    #     Direction["Front"] = "East"
-    #     Direction["Left"] = "North"
-    #     Direction["Right"] = "South"
-    #     Direction["Behind"] = "West"
-
-    # if robot.turnLeft():
-    #     Direction["Front"] = "West"
-    #     Direction["Left"] = "South"
-    #     Direction["Right"] = "North"
-    #     Direction["Behind"] = "East"
-
-    # if robot.moveForward():
-    #     Direction["Front"] = "North"
-    #     Direction["Left"] = "West"
-    #     Direction["Right"] = "East"
-    #     Direction["Behind"] = "South"
-
-    # if robot.moveBackward():
-    #     Direction["Front"] = "South"
-    #     Direction["Left"] = "East"
-    #     Direction["Right"] = "West"
-    #     Direction["Behind"] = "North"
+if __name__ == "__main__":
+    my_robot = RobotHandler()
+    print("robot started")
+    my_robot.fight()
+    my_robot
