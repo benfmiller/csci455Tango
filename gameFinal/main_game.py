@@ -19,7 +19,7 @@ from kivy.uix.screenmanager import ScreenManager
 
 starting_health = 100
 damage_range = [20, 40]
-max_moves = 30
+max_moves = 40
 actually_speak = False
 actually_listen = False
 actually_move = False
@@ -40,17 +40,25 @@ class StartButton(Button):
             print("Starting Game!")
             app = App.get_running_app()
             app.root.current = "gameScreen"  # type: ignore
+            print("here")
+            app.new_game()  # type: ignore
             Thread(target=app.start_game).start()  # type: ignore
         return super().on_touch_down(touch)
 
 
 class ReturnToMainButton(Button):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.original_background = self.background_normal
+
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            print("Moving to start screen")
             app = App.get_running_app()
-            app.root.current = "mainScreen"  # type: ignore
-            Thread(target=app.start_game).start()  # type: ignore
+            # TODO: update this for image
+            # if app.root.ids.mainButton.text == "Done":  # type: ignore
+            if self.text == "Dead":  # type: ignore
+                app.root.current = "mainScreen"  # type: ignore
+                print("Moving to start screen")
         return super().on_touch_down(touch)
 
 
@@ -67,15 +75,18 @@ class TangoGameApp(App):
 
     def __init__(self) -> None:
         super().__init__()
-        print("Initialized main gameRobot")
-        self.game_map = Map()
         self.robot_handler = RobotHandler(actually_move=actually_move)
         self.speaker = Speaker(audio=actually_speak)
         self.listener = Listener(audio=actually_listen)
+        print("Initialized main gameRobot")
+
+    def new_game(self):
+        self.game_map = Map()
         self.health = starting_health
         self.has_key = False
         self.only_move = True
         self.move_number = 1
+        self.robot_handler.neutral()
 
     def start_game(self):
         print("Running")
@@ -86,6 +97,8 @@ class TangoGameApp(App):
     def game_loop(self) -> bool:
         # TODO: finish game loop
         # update gui
+        self.update_gui()
+        app = App.get_running_app()
         if self.only_move:
             input_options = self.game_map.get_input_options(only_move=True)
         else:
@@ -94,7 +107,6 @@ class TangoGameApp(App):
         if isinstance(self.game_map.current_node, EndNode):
             if self.has_key:
                 self.speaker.output("Win! We have the key, so we win")
-                app = App.get_running_app()
                 app.root.ids.mainButton.text = "Win!"  # type: ignore
                 self.robot_handler.win()
                 return False
@@ -108,9 +120,11 @@ class TangoGameApp(App):
 
         if self.health <= 0:
             self.speaker.output("We died. Game Over")
-            app = App.get_running_app()
+            app.root.ids.health.text = f"Health: {self.health}"  # type: ignore
             app.root.ids.mainButton.text = "Dead"  # type: ignore
             self.robot_handler.death()
+            self.update_gui()
+            return False
         if self.move_number > max_moves:
             self.speaker.output("You ran out of moves!")
             self.speaker.output(f"Max moves is {max_moves}")
@@ -118,11 +132,22 @@ class TangoGameApp(App):
             app = App.get_running_app()
             app.root.ids.mainButton.text = "Dead"  # type: ignore
             self.robot_handler.death()
+            self.update_gui()
+            return False
         else:
             self.speaker.output(f"Move {self.move_number} out of {max_moves}")
             time.sleep(0.1)
         self.move_number += 1
         return True
+
+    def update_gui(self):
+        app = App.get_running_app()
+        app.root.ids.moveNum.text = f"Move: {self.move_number}/{max_moves}\n Key: {self.has_key}"  # type: ignore
+        app.root.ids.health.text = f"Health: {self.health}"  # type: ignore
+        if isinstance(self.game_map.current_node, Enemy):
+            app.root.ids.node.text = f"{self.game_map.current_node.name}: {self.game_map.current_node.number}\nHealth: {self.game_map.current_node.health}"  # type: ignore
+        else:
+            app.root.ids.node.text = f"{self.game_map.current_node.name}: {self.game_map.current_node.number}"  # type: ignore
 
     def move_mode(self, input_options: list[str]):
         current_node = self.game_map.current_node
@@ -130,8 +155,9 @@ class TangoGameApp(App):
         if isinstance(current_node, RechargingNode):
             app.root.ids.mainButton.text = "Recharging"  # type: ignore
             self.speaker.output(f"Health recharged to {starting_health}")
-            time.sleep(0.1)
             self.health = starting_health
+            app.root.ids.health.text = f"Health: {self.health}"  # type: ignore
+            time.sleep(0.1)
         else:
             app.root.ids.mainButton.text = "Moving"  # type: ignore
 

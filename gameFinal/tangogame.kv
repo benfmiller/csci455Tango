@@ -13,31 +13,21 @@
     Screen:
         name: "gameScreen"
         BoxLayout:
-            Button:
+            orientation: "vertical"
+            BoxLayout:
+                size_hint_y: 0.3
+                Button:
+                    id: mapNode
+                    background_normal: "gameMap.png"
+                Label:
+                    id:node
+                    text: "sup"
+                Label:
+                    id: health
+                    text: "00"
+                Label:
+                    id: moveNum
+                    text: "1"
+            ReturnToMainButton:
                 id: mainButton
-                text: "This is the game screen!"
-    Screen:
-        name: "deathScreen"
-        BoxLayout:
-            ReturnToMainButton:
-                text: "This is the start screen!"
-    Screen:
-        name: "easyEnemyScreen"
-        BoxLayout:
-            ReturnToMainButton:
-                text: "Easy enemy"
-    Screen:
-        name: "strongEnemyScreen"
-        BoxLayout:
-            ReturnToMainButton:
-                text: "Easy enemy"
-    Screen:
-        name: "rechargingScreen"
-        BoxLayout:
-            ReturnToMainButton:
-                text: "Easy enemy"
-    Screen:
-        name: "movingScreen"
-        BoxLayout:
-            ReturnToMainButton:
-                text: "Easy enemy"
+                text: ""

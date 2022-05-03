@@ -2,6 +2,7 @@ import random
 
 
 class Node:
+    name = "base node"
     number: int = 0
 
     def __init__(self) -> None:
@@ -15,22 +16,29 @@ class Node:
 
 
 class EndNode(Node):
+    name = "End Node"
+
     def __init__(self) -> None:
         super().__init__()
         self.unlocked = False
 
 
 class StartNode(Node):
+    name = "Start Node"
+
     def __init__(self) -> None:
         super().__init__()
 
 
 class RechargingNode(Node):
+    name = "Recharging Node"
+
     def __init__(self) -> None:
         super().__init__()
 
 
 class Enemy(Node):
+    name = "Base Enemy Node"
     health: float
 
     def __init__(self) -> None:
@@ -38,24 +46,21 @@ class Enemy(Node):
 
 
 class EasyEnemy(Enemy):
+    name = "Easy Enemy"
+
     def __init__(self) -> None:
         self.health = 50
 
 
 class StrongEnemy(Enemy):
+    name = "Strong Enemy"
+
     def __init__(self, has_key=False) -> None:
         self.has_key = has_key
         self.health = 100
 
 
 class Map:
-    full_map = [
-        [1, "x", 2, "x", 3],
-        [" ", " ", "x", " ", "x"],
-        [4, "x", 5, " ", 6],
-        ["x", " ", "x", " ", " "],
-        [7, " ", 8, "x", 9],
-    ]
     direction_map = {
         "front": "north",
         "left": "west",
@@ -68,6 +73,13 @@ class Map:
 
     def __init__(self) -> None:
         print("Initializing Map")
+        self.full_map = [
+            [1, "x", 2, "x", 3],
+            [" ", " ", "x", " ", "x"],
+            [4, "x", 5, " ", 6],
+            ["x", " ", "x", " ", " "],
+            [7, " ", 8, "x", 9],
+        ]
         possible_corners = [[0, 0], [0, 4], [4, 0], [4, 4]]
         starting_corner = random.randint(0, 3)
         self.position = possible_corners.pop(starting_corner)

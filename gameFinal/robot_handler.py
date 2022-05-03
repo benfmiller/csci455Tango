@@ -49,6 +49,10 @@ class RobotHandler:
         # TODO: win movements
         ...
 
+    def neutral(self):
+        # TODO: nice neutral state
+        ...
+
     # def turn(self):
 
     # if robot.turnRight():
