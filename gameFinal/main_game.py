@@ -40,9 +40,18 @@ class StartButton(Button):
 
 
 class ReturnToMainButton(Button):
+    time = 0.0
+    rate = 0.5
+    frame = 1
+    doing_animation = False
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.original_background = self.background_normal
+        # self.background_normal = "atlas://robot/frame1"
+        # self.background_normal = self.robot.source
+        # self.add_widget(self.robot)
+        Clock.schedule_interval(self.update, 1.0 / 60.0)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -53,6 +62,31 @@ class ReturnToMainButton(Button):
                 app.root.current = "mainScreen"  # type: ignore
                 print("Moving to start screen")
         return super().on_touch_down(touch)
+
+    def update(self, dt):
+        self.time += dt
+        if self.time > self.rate:
+            self.time -= self.rate
+            if "atlas" not in self.background_normal:
+                self.doing_animation = False
+                self.original_background = ""
+            if (
+                not self.doing_animation
+                and "atlas" in self.background_normal
+                and "default" not in self.background_normal
+                and self.original_background != ""
+            ):
+                print("animation triggered")
+                self.doing_animation = True
+                self.original_background = self.background_normal
+            if self.doing_animation:
+                print(self.background_normal)
+                print(f"original {self.original_background}")
+                self.background_normal = self.original_background + str(self.frame)
+                # self.background_normal = "atlas://robot/frame" + str(self.frame)
+                self.frame = self.frame + 1
+                if self.frame > 2:
+                    self.frame = 1
 
 
 class TangoGameApp(App):
@@ -156,7 +190,7 @@ class TangoGameApp(App):
             app.root.ids.health.text = f"Health: {self.health}"  # type: ignore
             time.sleep(0.1)
         else:
-            app.root.ids.mainButton.background_normal = "./images/robotwalkingSPRITE.png"  # type: ignore
+            app.root.ids.mainButton.background_normal = "atlas://robotWalking/frame"  # type: ignore
             self.update_gui()
 
         self.speaker.output(

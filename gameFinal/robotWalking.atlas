@@ -1,0 +1,6 @@
+{
+    "images/robotwalkingSPRITE.png": {
+        "frame1": [0, 0, 175, 439],
+        "frame2": [175, 0, 175, 439],
+    }
+}
