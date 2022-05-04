@@ -39,25 +39,28 @@ class RechargingNode(Node):
 
 class Enemy(Node):
     name = "Base Enemy Node"
-    health: float
+    damage_multiplier: float
 
     def __init__(self) -> None:
-        pass
+        super().__init__()
+        self.health = 50
 
 
 class EasyEnemy(Enemy):
     name = "Easy Enemy"
 
     def __init__(self) -> None:
-        self.health = 50
+        super().__init__()
+        self.damage_multiplier = 1
 
 
 class StrongEnemy(Enemy):
     name = "Strong Enemy"
 
     def __init__(self, has_key=False) -> None:
+        super().__init__()
         self.has_key = has_key
-        self.health = 100
+        self.damage_multiplier = 2
 
 
 class Map:
