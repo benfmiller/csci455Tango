@@ -8,20 +8,17 @@ from threading import Thread
 from robot_handler import RobotHandler
 
 from kivy.app import App
-from kivy.core.image import Image
 from kivy.uix.button import Button
-from kivy.uix.widget import Widget
 from kivy.core.window import Window
-from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager
 
 starting_health = 100
 damage_range = [20, 40]
 max_moves = 40
-actually_speak = False
-actually_listen = False
-actually_move = False
+actually_speak = True
+actually_listen = True
+actually_move = True
 
 if actually_move:
     Window.maximize()  # type: ignore
@@ -51,7 +48,7 @@ class ReturnToMainButton(Button):
         # self.background_normal = "atlas://robot/frame1"
         # self.background_normal = self.robot.source
         # self.add_widget(self.robot)
-        Clock.schedule_interval(self.update, 1.0 / 60.0)
+        # Clock.schedule_interval(self.update, 1.0 / 60.0)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -190,7 +187,7 @@ class TangoGameApp(App):
             app.root.ids.health.text = f"Health: {self.health}"  # type: ignore
             time.sleep(0.1)
         else:
-            app.root.ids.mainButton.background_normal = "atlas://robotWalking/frame"  # type: ignore
+            app.root.ids.mainButton.background_normal = "./images/robotwalkingSPRITE.png"  # type: ignore
             self.update_gui()
 
         self.speaker.output(
